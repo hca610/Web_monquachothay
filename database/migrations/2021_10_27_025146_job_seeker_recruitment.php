@@ -19,7 +19,7 @@ class JobSeekerRecruitment extends Migration
             $table->unsignedBigInteger('recruitment_id');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('status');
+            $table->string('type');
 
 
             $table->foreign('job_seeker_id')
