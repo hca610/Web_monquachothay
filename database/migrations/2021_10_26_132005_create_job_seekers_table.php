@@ -6,20 +6,13 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateJobSeekersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('job_seekers', function (Blueprint $table) {
             $table->id('job_seeker_id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('first_name');
-            $table->string('last_name');
+            $table->foreignId('user_id');
             $table->date('birthday');
-            $table->string('gender');
+            $table->enum('gender', ['male', 'female', 'other']);
             $table->string('qualification');
             $table->string('work_experience');
             $table->string('education');
@@ -31,11 +24,6 @@ class CreateJobSeekersTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('job_seekers');

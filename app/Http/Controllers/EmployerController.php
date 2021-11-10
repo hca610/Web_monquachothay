@@ -7,8 +7,12 @@ use Illuminate\Http\Request;
 
 class EmployerController extends Controller
 {
-    public function listEmployer() {
+    public function showAllEmployer() {
         $employers = Employer::all();
         return $employers;
+    }
+
+    public function showRecruitment($employerId, $name) {
+        
     }
 }

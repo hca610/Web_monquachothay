@@ -18,8 +18,8 @@ class CreateMessagesTable extends Migration
             $table->string('title');
             $table->string('detail');
             $table->string('status');
-            $table->unsignedBigInteger('sender_id');
-            $table->unsignedBigInteger('receiver_id');
+            $table->foreignId('sender_id');
+            $table->foreignId('receiver_id');
             $table->timestamps();
 
             // Foreign key

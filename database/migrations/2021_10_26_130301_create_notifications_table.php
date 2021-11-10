@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateNotificationsTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
@@ -18,7 +13,7 @@ class CreateNotificationsTable extends Migration
             $table->string('title');
             $table->string('detail');
             $table->string('status');
-            $table->unsignedBigInteger('receiver_id');
+            $table->foreignId('receiver_id');
             $table->timestamps();
 
             $table->foreign('receiver_id')
@@ -26,11 +21,6 @@ class CreateNotificationsTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('notifications');

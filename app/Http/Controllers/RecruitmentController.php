@@ -6,5 +6,5 @@ use Illuminate\Http\Request;
 
 class RecruitmentController extends Controller
 {
-    //
+    // public function show
 }

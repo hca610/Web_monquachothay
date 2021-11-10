@@ -6,22 +6,17 @@ use Illuminate\Support\Facades\Schema;
 
 class JobSeekerRecruitment extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('job_seeker_recruitment', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('job_seeker_id');
-            $table->unsignedBigInteger('recruitment_id');
+            $table->foreignId('job_seeker_id');
+            $table->foreignId('recruitment_id');
             $table->date('start_date');
             $table->date('end_date');
-            $table->string('type');
+            $table->enum('type', ['following', 'working', 'quitted']);
 
-
+            // Foreign key
             $table->foreign('job_seeker_id')
                 ->references('job_seeker_id')->on('job_seekers');
 
@@ -30,11 +25,6 @@ class JobSeekerRecruitment extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         //
