@@ -14,8 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Route::resource('/category', 'CategoryController');
+Route::resource('/recruiment', 'RecruitmentController');
+Route::resource('/user', 'UserController');
+Route::view('/category/find', 'category/find');
+Route::get('/category', 'CategoryController@findCategoryByName')->name('category.findCategoryByName');
 
-Route::get('/category', 'CategoryController@showAllCategory');

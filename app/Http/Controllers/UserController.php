@@ -7,15 +7,19 @@ use App\Models\User;
 
 class UserController extends Controller
 {
-    public function getAllUser()
+    public function index()
     {
         $users = User::all();
-        return $users;
+        return view('/user/index')->with('users', $users);
     }
 
     public function create()
     {
-        //
+        return view('/user/create');
+    }
+
+    public function show()
+    {
     }
 
     public function createUser(Request $request)
@@ -25,9 +29,18 @@ class UserController extends Controller
         $user->save();
     }
 
+    public function search()
+    {
+        echo "hiihih";
+        return view('user.find');
+    }
+
     public function findUserByName($name)
     {
         $users = User::where('name', 'like', "%$name%")->get();
+        foreach ($users as $user) {
+            echo '<br>' . $user->name;
+        }
         return $users;
     }
 

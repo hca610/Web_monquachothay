@@ -7,17 +7,6 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function showAllCategory() {
-        $categories = Category::all();
-        return view('category')->with('categories', $categories);
-    }
-
-    public function addCategory($categoryName) {
-        $category = new Category();
-        $category->name = $categoryName;
-        $category->save();
-    }
-
     /**
      * Display a listing of the resource.
      *
@@ -25,7 +14,10 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+
+        $categories = Category::all();
+        // $categories = Category::orderBy('category_id')->cursorPaginate(15);
+        return view('category/index')->with('categories', $categories);
     }
 
     /**
@@ -35,7 +27,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return view('category/create');
     }
 
     /**
@@ -46,7 +38,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $category = new Category();
+        $category->fill($request->all());
+        $category->save();
+        return redirect('/category/create')->with('success', true);
     }
 
     /**
@@ -92,5 +87,19 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function findCategoryByName(Request $request)
+    {
+        $categories= Category::where('name', 'like', "%$request->name%")->get();
+        foreach ($categories as $category) {
+            echo '<br>' . $category->name;
+        }
+        // return redirect('/category/find')->with([
+        //     'success' => true,
+        //     'categories' => $categories,
+        // ]);
+        // return redirect('/category/find')->with('categories', $categories);
+        
     }
 }
