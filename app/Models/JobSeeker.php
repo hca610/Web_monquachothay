@@ -13,6 +13,6 @@ class JobSeeker extends Model
     }
 
     public function recruitments(){
-        return $this->belongsToMany(Recruitment::class);
+        return $this->belongsToMany(Recruitment::class)->withPivot('type', 'created_at');
     }
 }
