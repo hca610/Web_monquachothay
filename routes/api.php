@@ -23,3 +23,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Route::post('categories', 'CategoryController@index');
 // Route::resource('user', UserController::class);
 // Route::resource('employer', EmployerController::class);
+
+Route::apiResource('/user','UserController')->except('update');
+Route::post('/user', 'UserController@update')->name('user.update');

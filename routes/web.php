@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,9 +15,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::resource('/category', 'CategoryController');
-Route::resource('/recruiment', 'RecruitmentController');
-Route::resource('/user', 'UserController');
-Route::view('/category/find', 'category/find');
-Route::get('/category', 'CategoryController@findCategoryByName')->name('category.findCategoryByName');
+Route::resource('/category', 'CategoryController');
 
+Route::resource('/recruitment', 'RecruitmentController');
+
+Route::resource('/user', 'UserController')->except('update');
+Route::post('/user/{user}', 'UserController@update')->name('user.update');
+Route::post('/user', 'UserController@findUserByName')->name('user.findUserByName');
+// Route::post('/user/{user}', 'UserController@banUser')->name('user.banUser');
+
+Route::resource('/jobseeker', 'JobSeekerController');
+Route::post('/jobseeker/{jobseeker}', 'JobSeekerController@update')->name('jobseeker.update');

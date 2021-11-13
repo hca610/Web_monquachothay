@@ -1,5 +1,5 @@
 @extends('master')
-@section('title', 'Create user')
+@section('title', 'Create jobseeker')
 
 @section('content')
     <div class="row">
@@ -10,7 +10,7 @@
             @endif
 
             <br>
-            <form action="{{ route('user.store') }}" method="post">
+            <form action="{{ route('jobseeker.store') }}" method="post">
                 @csrf
                 <label for="name">Name</label>
                 <input type="text" class="form-control" name="name">
@@ -28,8 +28,25 @@
 
                 <label for="address">Address</label>
                 <input type="text" class="form-control" name="address">
-                <label for="status">Status</label>
-                <input type="text" class="form-control" name="status">
+
+                <label for="birthday">Birthday</label>
+                <input type="text" class="form-control" name="birthday">
+
+                <label for="gender">Gender</label>
+                <input type="text" class="form-control" name="gender">
+
+                <label for="qualification">Qualification</label>
+                <input type="text" class="form-control" name="qualification">
+
+                <label for="work_experience">Work experience</label>
+                <input type="text" class="form-control" name="work_experience">
+
+                <label for="education">Education</label>
+                <input type="text" class="form-control" name="education">
+
+                <label for="skill">Skill</label>
+                <input type="text" class="form-control" name="skill">
+
                 <button class="btn btn-primary">Create</button>
             </form>
         </div>

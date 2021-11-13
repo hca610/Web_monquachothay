@@ -10,7 +10,8 @@ class UserController extends Controller
     public function index()
     {
         $users = User::all();
-        return view('/user/index')->with('users', $users);
+        // return view('/user/index')->with('users', $users);
+        return $users;
     }
 
     public function create()
@@ -18,50 +19,54 @@ class UserController extends Controller
         return view('/user/create');
     }
 
-    public function show()
+    public function show($id)
     {
+        $user = User::findOrFail($id);
+        return view('user.detail')->with('user', $user);
     }
 
-    public function createUser(Request $request)
+    public function store(Request $request)
     {
         $user = new User();
+        echo $request;
         $user->fill($request->all());
         $user->save();
+
+        return redirect('/user/create')->with('success', true);
     }
 
-    public function search()
+    public function findUserByName(Request $request)
     {
-        echo "hiihih";
-        return view('user.find');
-    }
-
-    public function findUserByName($name)
-    {
-        $users = User::where('name', 'like', "%$name%")->get();
+        $users = User::where('name', 'like', "%$request->name%")->get();
         foreach ($users as $user) {
-            echo '<br>' . $user->name;
+            echo  $user->name.'<br>';
         }
-        return $users;
+        // return $users;
     }
 
-    public function edit($id)
+    public function edit(Request $request)
     {
-        //
+        // $user = User::findOrFail($request->user_id);
+        // return view('user.edit')->with('user', $user);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        //
+        $user = User::find($request->user_id);
+        $user->fill($request->all());
+        $user->save();
+        return $user;
     }
 
     public function destroy($id)
     {
+        //
     }
 
-    public function changeStatus($id, $status)
+    public function banUser(Request $request)
     {
-        $user = User::findOrFail($id);
-        $user->status = $status;
+        $user = User::find($request->user_id);
+        $user->status = 'banned';
         $user->save();
     }
 }

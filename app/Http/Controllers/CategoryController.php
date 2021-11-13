@@ -16,7 +16,6 @@ class CategoryController extends Controller
     {
 
         $categories = Category::all();
-        // $categories = Category::orderBy('category_id')->cursorPaginate(15);
         return view('category/index')->with('categories', $categories);
     }
 
@@ -91,15 +90,10 @@ class CategoryController extends Controller
 
     public function findCategoryByName(Request $request)
     {
-        $categories= Category::where('name', 'like', "%$request->name%")->get();
-        foreach ($categories as $category) {
-            echo '<br>' . $category->name;
-        }
-        // return redirect('/category/find')->with([
-        //     'success' => true,
-        //     'categories' => $categories,
-        // ]);
-        // return redirect('/category/find')->with('categories', $categories);
-        
+        $categories = Category::where('name', 'like', "%$request->name%")->get();
+        // foreach ($categories as $category) {
+        //     echo '<li>' . $category->name;
+        // }
+        return $categories;
     }
 }

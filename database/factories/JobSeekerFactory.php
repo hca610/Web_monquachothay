@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\JobSeeker;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\User;
 
 class JobSeekerFactory extends Factory
 {
@@ -22,7 +23,13 @@ class JobSeekerFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'user_id' => User::all()->random()->user_id,
+            'birthday' => $this->faker->date(),
+            'gender' => 'male',
+            'qualification' => $this->faker->text(20),
+            'work_experience' => $this->faker->text(20),
+            'education' => $this->faker->text(20),
+            'skill' => $this->faker->text(20),
         ];
     }
 }

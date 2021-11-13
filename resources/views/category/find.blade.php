@@ -16,10 +16,10 @@
     <br>
 
     @if (session('success'))
-        @foreach ($categories as $category)
-            '<br>'.{{  $catergory->name }};
-        @endforeach
-    @else
-        Nothing
+        <ul>
+            @foreach ($categories as $category)
+                '<li>'.{{ $catergory->name }};
+            @endforeach
+        </ul>
     @endif
 @endsection

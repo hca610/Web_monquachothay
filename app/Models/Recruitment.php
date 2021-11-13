@@ -9,6 +9,8 @@ class Recruitment extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'recruitment_id';
+
     public function category() {
         return $this->belongsTo(Category::class);
     }

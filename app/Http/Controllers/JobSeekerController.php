@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employer;
+use App\Models\JobSeeker;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class JobSeekerController extends Controller
@@ -13,7 +16,8 @@ class JobSeekerController extends Controller
      */
     public function index()
     {
-        //
+        $jobSeekers = JobSeeker::all();
+        return view('jobseeker.index')->with('jobseekers', $jobSeekers);
     }
 
     /**
@@ -23,7 +27,7 @@ class JobSeekerController extends Controller
      */
     public function create()
     {
-        //
+        return view('jobseeker.create');
     }
 
     /**
@@ -34,7 +38,14 @@ class JobSeekerController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = new User();
+        $user->fill($request->all());
+        $user_id = $user->save();
+
+        $jobSeeker = new JobSeeker();
+        $jobSeeker->fill($request->all());
+        $jobSeeker->user_id = $user_id;
+        $jobSeeker->save();
     }
 
     /**
@@ -45,7 +56,7 @@ class JobSeekerController extends Controller
      */
     public function show($id)
     {
-        //
+        return view('jobseeker.show');
     }
 
     /**
@@ -68,7 +79,9 @@ class JobSeekerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $jobSeeker = Employer::findOrFail($id);
+        $jobSeeker->fill($request->all());
+        $jobSeeker->save();
     }
 
     /**

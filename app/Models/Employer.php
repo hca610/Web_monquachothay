@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Employer extends Model
 {
     use HasFactory;
+
+    protected $primaryKey = 'employer_id';
+
     public function indentify()
     {
         return $this->hasOne(User::class);
