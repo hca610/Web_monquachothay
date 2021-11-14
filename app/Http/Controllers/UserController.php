@@ -9,63 +9,59 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all();
-        // return view('/user/index')->with('users', $users);
+        $users = User::paginate(20);
         return $users;
     }
 
     public function create()
     {
-        return view('/user/create');
+        // return view('/user/create');
     }
 
     public function show($id)
     {
         $user = User::findOrFail($id);
-        return view('user.detail')->with('user', $user);
+        return $user;
     }
 
     public function store(Request $request)
     {
         $user = new User();
-        echo $request;
         $user->fill($request->all());
         $user->save();
 
-        return redirect('/user/create')->with('success', true);
-    }
-
-    public function findUserByName(Request $request)
-    {
-        $users = User::where('name', 'like', "%$request->name%")->get();
-        foreach ($users as $user) {
-            echo  $user->name.'<br>';
-        }
-        // return $users;
+        return $user;
     }
 
     public function edit(Request $request)
     {
-        // $user = User::findOrFail($request->user_id);
-        // return view('user.edit')->with('user', $user);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $user_id)
     {
-        $user = User::find($request->user_id);
+        $user = User::find($user_id);
         $user->fill($request->all());
         $user->save();
         return $user;
     }
 
-    public function destroy($id)
+    public function search(Request $request)
     {
-        //
+        $user = User::query()
+            ->where('name', 'like', "%$request->name%")
+            ->where('username', 'like', "%$request->username%")
+            ->where('phonenumber', 'like', "%$request->phonenumber%")
+            ->where('email', 'like', "%$request->email%")
+            ->where('address', 'like', "%$request->address%")
+            ->where('status', 'like', "%$request->status%")
+            ->where('role', 'like', "%$request->role%")
+            ->get();
+        return $user;
     }
 
-    public function banUser(Request $request)
+    public function banUser($id)
     {
-        $user = User::find($request->user_id);
+        $user = User::find($id);
         $user->status = 'banned';
         $user->save();
     }

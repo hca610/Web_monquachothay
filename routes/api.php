@@ -16,13 +16,17 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-// Route::post('categories', 'CategoryController@index');
-// Route::resource('user', UserController::class);
-// Route::resource('employer', EmployerController::class);
 
-Route::apiResource('/user','UserController')->except('update');
-Route::post('/user', 'UserController@update')->name('user.update');
+Route::apiResource('/user','UserController');
+Route::post('/user/find', 'UserController@search');
+Route::post('/user/{user}', 'UserController@banUser');
+
+Route::apiResource('/employer','EmployerController');
+
+Route::apiResource('/jobseeker','JobSeekerController');
+
+Route::apiResource('/category','CategoryController');

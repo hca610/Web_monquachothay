@@ -9,6 +9,7 @@ class Employer extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
     protected $primaryKey = 'employer_id';
 
     public function indentify()
