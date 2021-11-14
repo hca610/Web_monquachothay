@@ -30,7 +30,7 @@ class UserFactory extends Factory
             'address' => $this->faker->address(),
             'status' => 'active',
             'username' => $this->faker->userName(),
-            'role' => 'employer',
+            'role' => 'jobseeker',
         ];
     }
 

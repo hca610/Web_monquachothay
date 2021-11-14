@@ -21,12 +21,18 @@ use Illuminate\Support\Facades\Route;
 // });
 
 
-Route::apiResource('/user','UserController');
-Route::post('/user/find', 'UserController@search');
+Route::get('/user', 'UserController@search');
 Route::post('/user/{user}', 'UserController@banUser');
+Route::get('/user/{user}','UserController@show');
 
 Route::apiResource('/employer','EmployerController');
+Route::get('/employer', 'EmployerController@search');
+Route::post('/employer/create', 'EmployerController@store');
+Route::put('/employer/{employer}', 'EmployerController@show');
 
-Route::apiResource('/jobseeker','JobSeekerController');
+Route::get('/jobseeker','JobSeekerController@search');
+Route::post('/jobseeker/create', 'JobSeekerController@store');
+Route::get('/jobseeker/{jobseeker}','JobSeekerController@show');
+Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
 
-Route::apiResource('/category','CategoryController');
+Route::get('/category', 'JobSeekerController@search');

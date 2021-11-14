@@ -4,15 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function index()
-    {
-        $users = User::paginate(20);
-        return $users;
-    }
-
     public function create()
     {
         // return view('/user/create');
@@ -20,8 +15,20 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::findOrFail($id);
-        return $user;
+        $user = User::find($id);
+        if ($user->role == 'jobseeker') {
+            $user = DB::table('users')
+                ->join('job_seekers', 'users.user_id', 'job_seekers.user_id')
+                ->where('users.user_id', '=', $id)
+                ->get();
+            return $user;
+        } else if ($user->role == 'employer') {
+            $user = DB::table('users')
+                ->join('employers', 'users.user_id', 'employers.user_id')
+                ->where('users.user_id', '=', $id)
+                ->get();
+            return $user;
+        }
     }
 
     public function store(Request $request)
@@ -47,16 +54,16 @@ class UserController extends Controller
 
     public function search(Request $request)
     {
-        $user = User::query()
-            ->where('name', 'like', "%$request->name%")
+        $users = User::where('name', 'like', "%$request->name%")
             ->where('username', 'like', "%$request->username%")
             ->where('phonenumber', 'like', "%$request->phonenumber%")
             ->where('email', 'like', "%$request->email%")
             ->where('address', 'like', "%$request->address%")
             ->where('status', 'like', "%$request->status%")
             ->where('role', 'like', "%$request->role%")
-            ->get();
-        return $user;
+            ->paginate(20);
+
+        return $users;
     }
 
     public function banUser($id)

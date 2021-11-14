@@ -9,7 +9,7 @@ class JobSeeker extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable= ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
     public $timestamps = false;
 
     protected $primaryKey = 'job_seeker_id';

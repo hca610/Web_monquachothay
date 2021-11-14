@@ -7,16 +7,9 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index()
-    {
-
-        $categories = Category::all();
-        return view('category/index')->with('categories', $categories);
-    }
-
     public function create()
     {
-        return view('category/create');
+        //
     }
 
     public function store(Request $request)
@@ -24,7 +17,6 @@ class CategoryController extends Controller
         $category = new Category();
         $category->fill($request->all());
         $category->save();
-        return redirect('/category/create')->with('success', true);
     }
 
     public function show($id)
@@ -47,9 +39,9 @@ class CategoryController extends Controller
         //
     }
 
-    public function findCategoryByName(Request $request)
+    public function search(Request $request)
     {
         $categories = Category::where('name', 'like', "%$request->name%")->get();
-       return $categories;
+        return $categories;
     }
 }
