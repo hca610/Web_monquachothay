@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Message;
 
 class MessageController extends Controller
 {
@@ -13,7 +14,8 @@ class MessageController extends Controller
      */
     public function index()
     {
-        //
+        $messages = Message::simplePaginate(10);
+        return response()->json($messages);
     }
 
     /**
@@ -34,7 +36,14 @@ class MessageController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $message = new Message;
+        $message->title = $request->input('title');
+        $message->detail = $request->input('detail');
+        $message->status = $request->input('status');
+        $message->sender_id = $request->input('sender_id');
+        $message->receiver_id = $request->input('receiver_id');
+        $message->save();
+        return response()->json($message);
     }
 
     /**
@@ -45,7 +54,8 @@ class MessageController extends Controller
      */
     public function show($id)
     {
-        //
+        $message = Message::find($id);
+        return response()->json($message);
     }
 
     /**
@@ -68,7 +78,14 @@ class MessageController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $message = Message::find($id);
+        $message->title = $request->input('title');
+        $message->detail = $request->input('detail');
+        $message->status = $request->input('status');
+        $message->sender_id = $request->input('sender_id');
+        $message->receiver_id = $request->input('receiver_id');
+        $message->save();
+        return response()->json($message);
     }
 
     /**
@@ -80,5 +97,23 @@ class MessageController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function showUserMessage($sender_id, $receiver_id)
+    {
+        $notifications = Message::orderBy('created_at', 'desc')
+            ->where('sender_id', $sender_id)
+            ->where('receiver_id', $receiver_id)
+            ->simplePaginate(10);
+        dd($notifications);
+        return response()->json($notifications);
+    }
+
+    public function reportCount($receiver_id)
+    {
+        $notification_counter = Message::where('title', "report")
+            ->where('receiver_id', $receiver_id)
+            ->count();
+        return response()->json($notification_counter);
     }
 }

@@ -20,6 +20,23 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('categories', 'CategoryController@index');
-Route::resource('user', UserController::class);
-Route::resource('employer', EmployerController::class);
+// Route::post('categories', 'CategoryController@index');
+// Route::resource('user', UserController::class);
+// Route::resource('employer', EmployerController::class);
+
+Route::resource('/notification', NotificationController::class);
+Route::get('/notification/user/{user_id}', function($user_id) {
+    return App\Http\Controllers\NotificationController::showUserNoti($user_id);
+})->name('notification.showUserNoti');
+
+Route::resource('/message', MessageController::class);
+Route::get('/message/user/sender={sender_id}', function($sender_id) {
+    $receiver_id = 0;
+    return App\Http\Controllers\MessageController::showUserMessage($sender_id, $receiver_id);
+})->name('message.showUserMessagebySender');
+Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', function($sender_id, $receiver_id) {
+    return App\Http\Controllers\MessageController::showUserMessage($sender_id, $receiver_id);
+})->name('message.showUserMessageBetweenUsers');
+Route::get('/report/{receiver_id}', function($receiver_id) {
+    return App\Http\Controllers\MessageController::reportCount($receiver_id);
+})->name('message.reportCouter');
