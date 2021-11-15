@@ -10,14 +10,15 @@
 |        | PUT      | api/jobseeker/{jobseeker}                                     |                             | App\Http\Controllers\JobSeekerController@update            | api        |
 |        | GET|HEAD | api/jobseeker/{jobseeker}                                     |                             | App\Http\Controllers\JobSeekerController@show              | api        |
 |        | POST     | api/message                                                   | Store Message               | App\Http\Controllers\MessageController@store               | api        |
-|        | GET|HEAD | api/message/between/sender={sender_id}&receiver={receiver_id} | Show Messages between users | App\Http\Controllers\MessageController@showUserMessage     | api        |
+|        | GET|HEAD | api/message/between/sender={sender_id}&receiver={receiver_id} | Show Messages between users | App\Http\Controllers\MessageController@showUsersMessage    | api        |
 |        | PUT      | api/message/{message}                                         | Update Message              | App\Http\Controllers\MessageController@update              | api        |
 |        | GET|HEAD | api/message/{message}                                         | Show Message                | App\Http\Controllers\MessageController@show                | api        |
 |        | POST     | api/notification                                              | Store Notification          | App\Http\Controllers\NotificationController@store          | api        |
 |        | GET|HEAD | api/notification/user/{user_id}                               | Show user Notifications     | App\Http\Controllers\NotificationController@showUserNoti   | api        |
 |        | GET|HEAD | api/notification/{notification}                               | Show Notification           | App\Http\Controllers\NotificationController@show           | api        |
 |        | PUT      | api/notification/{notification}                               | Update Notification         | App\Http\Controllers\NotificationController@update         | api        |
-|        | GET|HEAD | api/report/receiver={receiver_id}                             | Count user Reported         | App\Http\Controllers\MessageController@reportCount         | api        |
+|        | GET|HEAD | api/report/receiver={receiver_id}/all                         | Show all reports of an user | App\Http\Controllers\MessageController@showReports         | api        |
+|        | GET|HEAD | api/report/receiver={receiver_id}/count                       | Count user Reported         | App\Http\Controllers\MessageController@reportCount         | api        |
 |        | GET|HEAD | api/user                                                      |                             | App\Http\Controllers\UserController@search                 | api        |
 |        | GET|HEAD | api/user/{user}                                               |                             | App\Http\Controllers\UserController@show                   | api        |
 |        | POST     | api/user/{user}                                               |                             | App\Http\Controllers\UserController@banUser                | api        |

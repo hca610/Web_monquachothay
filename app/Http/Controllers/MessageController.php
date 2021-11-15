@@ -99,7 +99,13 @@ class MessageController extends Controller
         //
     }
 
-    public function showUserMessage($sender_id, $receiver_id)
+    /**
+     * Show message from user to user.
+     *
+     * @param  int  $sender_id, $receiver_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showUsersMessage($sender_id, $receiver_id)
     {
         $notifications = Message::orderBy('created_at', 'desc')
             ->where('sender_id', $sender_id)
@@ -109,11 +115,32 @@ class MessageController extends Controller
         return response()->json($notifications);
     }
 
+    /**
+     * Count number of reports an user received.
+     *
+     * @param  int  $receiver_id
+     * @return \Illuminate\Http\Response
+     */
     public function reportCount($receiver_id)
     {
-        $notification_counter = Message::where('title', "report")
+        $report_counter = Message::where('title', "report")
             ->where('receiver_id', $receiver_id)
             ->count();
-        return response()->json($notification_counter);
+        return response()->json($report_counter);
+    }
+
+    /**
+     * Show reports an user received.
+     *
+     * @param  int  $receiver_id
+     * @return \Illuminate\Http\Response
+     */
+    public function showReports($receiver_id)
+    {
+        $reports = Message::where('title', "report")
+            ->where('receiver_id', $receiver_id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return response()->json($reports);
     }
 }
