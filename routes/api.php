@@ -24,35 +24,37 @@ use Illuminate\Support\Facades\Route;
 // Route::resource('user', UserController::class);
 // Route::resource('employer', EmployerController::class);
 
-Route::resource('/notification', NotificationController::class);
-Route::get('/notification/user/{user_id}', function($user_id) {
-    return App\Http\Controllers\NotificationController::showUserNoti($user_id);
-})->name('notification.showUserNoti');
+# Notification
+// Route::resource('/notification', NotificationController::class);
+Route::post('notification', 'NotificationController@store')->name('Store Notification');
+Route::put('notification/{notification}', 'NotificationController@update')->name('Update Notification');
+Route::get('notification/{notification}', 'NotificationController@show')->name('Show Notification');
+Route::get('/notification/user/{user_id}', 'NotificationController@showUserNoti')->name('Show user Notifications');
 
-Route::resource('/message', MessageController::class);
-Route::get('/message/user/sender={sender_id}', function($sender_id) {
-    $receiver_id = 0;
-    return App\Http\Controllers\MessageController::showUserMessage($sender_id, $receiver_id);
-})->name('message.showUserMessagebySender');
-Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', function($sender_id, $receiver_id) {
-    return App\Http\Controllers\MessageController::showUserMessage($sender_id, $receiver_id);
-})->name('message.showUserMessageBetweenUsers');
-Route::get('/report/{receiver_id}', function($receiver_id) {
-    return App\Http\Controllers\MessageController::reportCount($receiver_id);
-})->name('message.reportCouter');
+# Message
+// Route::resource('/message', MessageController::class);
+Route::post('message', 'MessageController@store')->name('Store Message');
+Route::put('message/{message}', 'MessageController@update')->name('Update Message');
+Route::get('message/{message}', 'MessageController@show')->name('Show Message');
+Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', 'MessageController@showUserMessage')->name('Show Messages between users');
+// Route::redirect('/message/user/sender={sender_id}', '/message/between/sender={sender_id}&receiver=0');
+Route::get('/report/receiver={receiver_id}', 'MessageController@reportCount')->name('Count user Reported');
 
+# User
 Route::get('/user', 'UserController@search');
 Route::post('/user/{user}', 'UserController@banUser');
 Route::get('/user/{user}','UserController@show');
 
-Route::apiResource('/employer','EmployerController');
+# Employer
 Route::get('/employer', 'EmployerController@search');
 Route::post('/employer/create', 'EmployerController@store');
 Route::put('/employer/{employer}', 'EmployerController@show');
 
+# Jobseeker
 Route::get('/jobseeker','JobSeekerController@search');
 Route::post('/jobseeker/create', 'JobSeekerController@store');
 Route::get('/jobseeker/{jobseeker}','JobSeekerController@show');
 Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
 
+# Category
 Route::get('/category', 'JobSeekerController@search');
