@@ -2,90 +2,90 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employer;
+use App\Models\JobSeeker;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class JobSeekerController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function search(Request $request)
     {
-        //
+        $jobSeekers = DB::table('job_seekers')
+            ->join('users', 'users.user_id', '=', 'job_seekers.user_id')
+            ->where('birthday', 'like', "%$request->birthday%")
+            ->where('qualification', 'like', "%$request->qualification%")
+            ->where('work_experience', 'like', "% $request->work_experience%")
+            ->where('education', 'like', "%$request->education%")
+            ->where('skill', 'like', "%$request->skill%")
+            ->where('name', 'like', "%$request->name%")
+            ->where('username', 'like', "%$request->username%")
+            ->where('phonenumber', 'like', "%$request->phonenumber%")
+            ->where('email', 'like', "%$request->email%")
+            ->where('address', 'like', "%$request->address%")
+            ->where('status', 'like', "%$request->status%")
+            ->paginate(20);
+
+        return $jobSeekers;
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        // return view('jobseeker.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        $user = new User();
+        $user->fill($request->all());
+        $user->role = 'jobseeker';
+        $user_id = $user->save();
+
+        $jobSeeker = new JobSeeker();
+        $jobSeeker->fill($request->all());
+        $jobSeeker->user_id = $user_id;
+        $jobSeeker->save();
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        $jobSeeker = JobSeeker::find($id);
+        if ($jobSeeker != NULL) {
+            return DB::table('job_seekers')
+                ->join('users', 'users.user_id', '=', 'job_seekers.user_id')
+                ->where('job_seeker_id', '=', $id)
+                ->get();
+        } else {
+            return 'Not found';
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit($id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
     {
-        //
+        $jobSeeker = Employer::find($id);
+        $jobSeeker->fill($request->all());
+        $jobSeeker->save();
+
+        $user = User::find($jobSeeker->user_id);
+        $user->fill($request->all());
+        $user->save();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
     }
 
-    public function followRecruitment($recruitmentId)
+    public function followRecruitment(Request $request)
     {
         $this->recruitments->pivot->job_seeker_id = $this->job_seeker_id;
-        $this->recruitments->pivot->recruitment_id = $recruitmentId;
+        $this->recruitments->pivot->recruitment_id = $request->recruitment_id;
         $this->recruitments->pivot->type = 'following';
         $this->recruitments->pivot->save();
     }

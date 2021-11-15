@@ -16,9 +16,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
 // Route::post('categories', 'CategoryController@index');
 // Route::resource('user', UserController::class);
@@ -40,3 +40,19 @@ Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', functio
 Route::get('/report/{receiver_id}', function($receiver_id) {
     return App\Http\Controllers\MessageController::reportCount($receiver_id);
 })->name('message.reportCouter');
+
+Route::get('/user', 'UserController@search');
+Route::post('/user/{user}', 'UserController@banUser');
+Route::get('/user/{user}','UserController@show');
+
+Route::apiResource('/employer','EmployerController');
+Route::get('/employer', 'EmployerController@search');
+Route::post('/employer/create', 'EmployerController@store');
+Route::put('/employer/{employer}', 'EmployerController@show');
+
+Route::get('/jobseeker','JobSeekerController@search');
+Route::post('/jobseeker/create', 'JobSeekerController@store');
+Route::get('/jobseeker/{jobseeker}','JobSeekerController@show');
+Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
+
+Route::get('/category', 'JobSeekerController@search');

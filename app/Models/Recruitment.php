@@ -9,6 +9,9 @@ class Recruitment extends Model
 {
     use HasFactory;
 
+    protected $primaryKey = 'recruitment_id';
+    protected $fillable = ['category_id', 'min_salary', 'job_name', 'detail', 'status', 'requirement', 'address'];
+
     public function category() {
         return $this->belongsTo(Category::class);
     }

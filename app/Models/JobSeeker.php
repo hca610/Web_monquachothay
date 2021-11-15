@@ -8,11 +8,19 @@ use Illuminate\Database\Eloquent\Model;
 class JobSeeker extends Model
 {
     use HasFactory;
-    public function indentify() {
+
+    protected $fillable= ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
+    public $timestamps = false;
+
+    protected $primaryKey = 'job_seeker_id';
+
+    public function indentify()
+    {
         return $this->hasOne(User::class);
     }
 
-    public function recruitments(){
+    public function recruitments()
+    {
         return $this->belongsToMany(Recruitment::class)->withPivot('type', 'created_at');
     }
 }
