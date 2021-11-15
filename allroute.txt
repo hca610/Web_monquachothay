@@ -1,0 +1,38 @@
++--------+-----------+---------------------------------------------------------------+-------------------------------------+------------------------------------------------------------+------------+
+| Domain | Method    | URI                                                           | Name                                | Action                                                     | Middleware |
++--------+-----------+---------------------------------------------------------------+-------------------------------------+------------------------------------------------------------+------------+
+|        | GET|HEAD  | api/category                                                  |                                     | App\Http\Controllers\JobSeekerController@search            | api        |
+|        | GET|HEAD  | api/employer                                                  |                                     | App\Http\Controllers\EmployerController@search             | api        |
+|        | POST      | api/employer                                                  | employer.store                      | App\Http\Controllers\EmployerController@store              | api        |
+|        | POST      | api/employer/create                                           |                                     | App\Http\Controllers\EmployerController@store              | api        |
+|        | PUT       | api/employer/{employer}                                       |                                     | App\Http\Controllers\EmployerController@show               | api        |
+|        | DELETE    | api/employer/{employer}                                       | employer.destroy                    | App\Http\Controllers\EmployerController@destroy            | api        |
+|        | PUT|PATCH | api/employer/{employer}                                       | employer.update                     | App\Http\Controllers\EmployerController@update             | api        |
+|        | GET|HEAD  | api/employer/{employer}                                       | employer.show                       | App\Http\Controllers\EmployerController@show               | api        |
+|        | GET|HEAD  | api/jobseeker                                                 |                                     | App\Http\Controllers\JobSeekerController@search            | api        |
+|        | POST      | api/jobseeker/create                                          |                                     | App\Http\Controllers\JobSeekerController@store             | api        |
+|        | PUT       | api/jobseeker/{jobseeker}                                     |                                     | App\Http\Controllers\JobSeekerController@update            | api        |
+|        | GET|HEAD  | api/jobseeker/{jobseeker}                                     |                                     | App\Http\Controllers\JobSeekerController@show              | api        |
+|        | GET|HEAD  | api/message                                                   | message.index                       | App\Http\Controllers\MessageController@index               | api        |
+|        | POST      | api/message                                                   | message.store                       | App\Http\Controllers\MessageController@store               | api        |
+|        | GET|HEAD  | api/message/between/sender={sender_id}&receiver={receiver_id} | message.showUserMessageBetweenUsers | Closure                                                    | api        |
+|        | GET|HEAD  | api/message/create                                            | message.create                      | App\Http\Controllers\MessageController@create              | api        |
+|        | GET|HEAD  | api/message/user/sender={sender_id}                           | message.showUserMessagebySender     | Closure                                                    | api        |
+|        | DELETE    | api/message/{message}                                         | message.destroy                     | App\Http\Controllers\MessageController@destroy             | api        |
+|        | PUT|PATCH | api/message/{message}                                         | message.update                      | App\Http\Controllers\MessageController@update              | api        |
+|        | GET|HEAD  | api/message/{message}                                         | message.show                        | App\Http\Controllers\MessageController@show                | api        |
+|        | GET|HEAD  | api/message/{message}/edit                                    | message.edit                        | App\Http\Controllers\MessageController@edit                | api        |
+|        | GET|HEAD  | api/notification                                              | notification.index                  | App\Http\Controllers\NotificationController@index          | api        |
+|        | POST      | api/notification                                              | notification.store                  | App\Http\Controllers\NotificationController@store          | api        |
+|        | GET|HEAD  | api/notification/create                                       | notification.create                 | App\Http\Controllers\NotificationController@create         | api        |
+|        | GET|HEAD  | api/notification/user/{user_id}                               | notification.showUserNoti           | Closure                                                    | api        |
+|        | DELETE    | api/notification/{notification}                               | notification.destroy                | App\Http\Controllers\NotificationController@destroy        | api        |
+|        | PUT|PATCH | api/notification/{notification}                               | notification.update                 | App\Http\Controllers\NotificationController@update         | api        |
+|        | GET|HEAD  | api/notification/{notification}                               | notification.show                   | App\Http\Controllers\NotificationController@show           | api        |
+|        | GET|HEAD  | api/notification/{notification}/edit                          | notification.edit                   | App\Http\Controllers\NotificationController@edit           | api        |
+|        | GET|HEAD  | api/report/{receiver_id}                                      | message.reportCouter                | Closure                                                    | api        |
+|        | GET|HEAD  | api/user                                                      |                                     | App\Http\Controllers\UserController@search                 | api        |
+|        | POST      | api/user/{user}                                               |                                     | App\Http\Controllers\UserController@banUser                | api        |
+|        | GET|HEAD  | api/user/{user}                                               |                                     | App\Http\Controllers\UserController@show                   | api        |
+|        | GET|HEAD  | sanctum/csrf-cookie                                           |                                     | Laravel\Sanctum\Http\Controllers\CsrfCookieController@show | web        |
++--------+-----------+---------------------------------------------------------------+-------------------------------------+------------------------------------------------------------+------------+
