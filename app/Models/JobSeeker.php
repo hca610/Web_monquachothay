@@ -9,12 +9,11 @@ class JobSeeker extends Model
 {
     use HasFactory;
 
-    protected $fillable= ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
     public $timestamps = false;
-
     protected $primaryKey = 'job_seeker_id';
+    protected $fillable= ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
 
-    public function indentify()
+    public function user()
     {
         return $this->hasOne(User::class);
     }

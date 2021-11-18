@@ -13,7 +13,7 @@ class Employer extends Model
     protected $primaryKey = 'employer_id';
     protected $fillable = ['about_us', 'image_link', 'num_employee', 'category_id'];
 
-    public function indentify()
+    public function user()
     {
         return $this->hasOne(User::class);
     }

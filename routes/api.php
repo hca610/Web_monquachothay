@@ -49,7 +49,7 @@ Route::get('/user/{user}','UserController@show');
 # Employer
 Route::get('/employer', 'EmployerController@search');
 Route::post('/employer/create', 'EmployerController@store');
-Route::put('/employer/{employer}', 'EmployerController@show');
+Route::get('/employer/{employer}', 'EmployerController@show');
 
 # Jobseeker
 Route::get('/jobseeker','JobSeekerController@search');
