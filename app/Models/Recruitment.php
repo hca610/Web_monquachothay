@@ -13,7 +13,7 @@ class Recruitment extends Model
     protected $fillable = ['category_id', 'min_salary', 'job_name', 'detail', 'status', 'requirement', 'address'];
 
     public function category() {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function jobSeekers() {
@@ -21,6 +21,6 @@ class Recruitment extends Model
     }
 
     public function employer() {
-        return $this->belongsTo(Employer::class);
+        return $this->belongsTo(Employer::class, 'employer_id');
     }
 }

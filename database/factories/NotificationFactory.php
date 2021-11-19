@@ -29,7 +29,7 @@ class NotificationFactory extends Factory
             'title' => Arr::random($allTitle),
             'detail' => $this->faker->text(200),
             'status'=> Arr::random($allStatus),
-            'receiver_id' => User::all()->random()->user_id,
+            'receiver_id' => User::all()->random()->user_id
         ];
     }
 }

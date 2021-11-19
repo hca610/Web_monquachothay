@@ -13,10 +13,10 @@ class Message extends Model
     protected $primaryKey = 'message_id';
 
     public function from() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function to() {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,10 +20,6 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
-// Route::post('categories', 'CategoryController@index');
-// Route::resource('user', UserController::class);
-// Route::resource('employer', EmployerController::class);
 
 # Notification
 // Route::resource('/notification', NotificationController::class);
@@ -46,18 +43,30 @@ Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports'
 # User
 Route::get('/user', 'UserController@search');
 Route::post('/user/{user}', 'UserController@banUser');
-Route::get('/user/{user}','UserController@show');
+Route::get('/user/{user}', 'UserController@show');
 
 # Employer
 Route::get('/employer', 'EmployerController@search');
-Route::post('/employer/create', 'EmployerController@store');
-Route::put('/employer/{employer}', 'EmployerController@show');
+Route::get('/employer/{employer}', 'EmployerController@show');
 
 # Jobseeker
-Route::get('/jobseeker','JobSeekerController@search');
-Route::post('/jobseeker/create', 'JobSeekerController@store');
-Route::get('/jobseeker/{jobseeker}','JobSeekerController@show');
+Route::get('/jobseeker', 'JobSeekerController@search');
+Route::get('/jobseeker/{jobseeker}', 'JobSeekerController@show');
 Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
 
 # Category
 Route::get('/category', 'JobSeekerController@search');
+
+# JWT
+Route::group([
+    'middleware' => 'api',
+    'prefix' => 'auth'
+
+], function ($router) {
+    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/refresh', [AuthController::class, 'refresh']);
+    Route::get('/user-profile', [AuthController::class, 'userProfile']);
+    Route::post('/change-pass', [AuthController::class, 'changePassWord']);
+});

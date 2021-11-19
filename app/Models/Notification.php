@@ -12,6 +12,6 @@ class Notification extends Model
     protected $primaryKey = "notification_id";
 
     public function receiver(){
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

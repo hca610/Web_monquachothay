@@ -13,10 +13,10 @@ class CreateJobSeekersTable extends Migration
             $table->foreignId('user_id');
             $table->date('birthday');
             $table->enum('gender', ['male', 'female', 'other']);
-            $table->string('qualification');
-            $table->string('work_experience');
-            $table->string('education');
-            $table->string('skill');
+            $table->string('qualification')->nullable();
+            $table->string('work_experience')->nullable();
+            $table->string('education')->nullable();
+            $table->string('skill')->nullable();
 
             //Foreign key
             $table->foreign('user_id')
