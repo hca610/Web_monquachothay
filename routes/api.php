@@ -37,6 +37,8 @@ Route::post('message', 'MessageController@store')->name('Store Message');
 Route::put('message/{message}', 'MessageController@update')->name('Update Message');
 Route::get('message/{message}', 'MessageController@show')->name('Show Message');
 Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', 'MessageController@showUsersMessage')->name('Show Messages between users');
+
+# Report
 // Route::redirect('/message/user/sender={sender_id}', '/message/between/sender={sender_id}&receiver=0');
 Route::get('/report/receiver={receiver_id}/count', 'MessageController@reportCount')->name('Count user Reported');
 Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports')->name('Show all reports of an user');
