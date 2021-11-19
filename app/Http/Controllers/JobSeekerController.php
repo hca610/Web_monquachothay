@@ -84,6 +84,7 @@ class JobSeekerController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $jobSeeker,
+                // 'user' => $jobSeeker->user(),
             ]);
         } catch (Exception $e) {
             return response()->json([

@@ -27,7 +27,7 @@ class EmployerFactory extends Factory
             'about_us' => $this->faker->text(200),
             'image_link' => $this->faker->imageUrl(),
             'num_employee' => $this->faker->randomNumber(),
-            'category_id' => $this->faker->randomNumber(),
+            'category_id' => $this->faker->numberBetween(1,10),
         ];
     }
 }

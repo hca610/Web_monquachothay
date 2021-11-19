@@ -20,7 +20,6 @@ class User extends Authenticatable implements JWTSubject
      */
     protected $fillable = [
         'name',
-        'username',
         'email',
         'password',
         'phonenumber',
@@ -60,13 +59,14 @@ class User extends Authenticatable implements JWTSubject
 
     public function employer()
     {
-        return $this->hasOne(Employer::class);
+        return $this->hasOne(Employer::class, 'user_id');
     }
 
     public function jobSeeker()
     {
-        return $this->hasOne(JobSeeker::class);
+        return $this->hasOne(JobSeeker::class, 'user_id');
     }
+
 
     public function getJWTIdentifier()
     {

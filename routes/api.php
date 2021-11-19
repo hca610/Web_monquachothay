@@ -21,10 +21,6 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // });
 
-// Route::post('categories', 'CategoryController@index');
-// Route::resource('user', UserController::class);
-// Route::resource('employer', EmployerController::class);
-
 # Notification
 // Route::resource('/notification', NotificationController::class);
 Route::post('notification', 'NotificationController@store')->name('Store Notification');
@@ -49,12 +45,10 @@ Route::get('/user/{user}', 'UserController@show');
 
 # Employer
 Route::get('/employer', 'EmployerController@search');
-Route::post('/employer/create', 'EmployerController@store');
 Route::get('/employer/{employer}', 'EmployerController@show');
 
 # Jobseeker
 Route::get('/jobseeker', 'JobSeekerController@search');
-Route::post('/jobseeker/create', 'JobSeekerController@store');
 Route::get('/jobseeker/{jobseeker}', 'JobSeekerController@show');
 Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
 
