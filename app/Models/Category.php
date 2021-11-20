@@ -14,6 +14,6 @@ class Category extends Model
     protected $fillable = ['name'];
 
     public function recruitments() {
-        return $this->hasMany(Recruitment::class);
+        return $this->hasMany(Recruitment::class, 'category_id');
     }
 }

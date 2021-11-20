@@ -130,7 +130,7 @@ class AuthController extends Controller
 
     public function userProfile()
     {
-        return response()->json(auth()->user());
+        $user = response()->json(auth()->user());
     }
 
     protected function createNewToken($token)
