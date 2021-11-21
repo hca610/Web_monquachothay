@@ -40,33 +40,37 @@ Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', 'Messag
 Route::get('/report/receiver={receiver_id}/count', 'MessageController@reportCount')->name('Count user Reported');
 Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports')->name('Show all reports of an user');
 
-# User
-Route::get('/user', 'UserController@search');
-Route::post('/user/{user}', 'UserController@banUser');
-Route::get('/user/{user}', 'UserController@show');
+# Admin
+Route::prefix('admin')->group(function ($router) {
+    Route::get('/user', 'UserController@search');
+    Route::post('/user/{user}', 'UserController@banUser');
+    Route::get('/user/{user}', 'UserController@show');
+});
 
 # Employer
-Route::get('/employer', 'EmployerController@search');
-Route::get('/employer/{employer}', 'EmployerController@show');
+// Route::get('/employer', 'EmployerController@search');
+// Route::get('/employer/{employer}', 'EmployerController@show')->middleware('auth:api');
+// Route::post('/employer/{employer}', 'EmployerController@update');
+// Route::put('/employer/{employer}', 'EmployerController@update')->middleware('auth:api');
 
 # Jobseeker
-Route::get('/jobseeker', 'JobSeekerController@search');
-Route::get('/jobseeker/{jobseeker}', 'JobSeekerController@show');
-Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update');
+// Route::get('/jobseeker', 'JobSeekerController@search');
+// Route::get('/jobseeker/{jobseeker}', 'JobSeekerController@show')->middleware('auth:api');
+// Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update')->middleware('auth:api');
 
 # Category
-Route::get('/category', 'JobSeekerController@search');
+Route::get('/category', 'CategoryController@search');
 
-# JWT
+# User
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth'
+    // 'prefix' => 'auth'
 
 ], function ($router) {
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/change-pass', [AuthController::class, 'changePassWord']);
+    Route::post('/change-password ', [AuthController::class, 'changePassWord']);
 });

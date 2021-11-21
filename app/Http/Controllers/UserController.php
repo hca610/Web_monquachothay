@@ -9,16 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function create()
-    {
-        // return view('/user/create');
-    }
-
     public function show($id)
     {
         try {
             $user = User::findOrFail($id);
-            return $user->jobSeeker;
 
             if ($user->role == 'jobseeker') {
                 $user = DB::table('users')
@@ -34,29 +28,14 @@ class UserController extends Controller
                 return $user;
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            return response()->json([
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
-    public function store(Request $request)
-    {
-        $user = new User();
-        $user->fill($request->all());
-        $user->password = bcrypt($request->password);
-        $user->save();
-
-        return $user;
-    }
-
-    public function update(Request $request, $user_id)
-    {
-        $user = User::find($user_id);
-        $user->fill($request->all());
-        $user->save();
-
-        return $user;
-    }
-
+    // TODO: cai tien de search dc ca jobseeker vs employer
     public function search(Request $request)
     {
         $users = User::where('name', 'like', "%$request->all()->name%")
@@ -68,14 +47,28 @@ class UserController extends Controller
             ->where('role', 'like', "%$request->role%")
             ->paginate(20);
 
-        // return $users;
-        return $request->all();
+        return response()->json([
+            'users' => $users,
+        ]);
     }
 
     public function banUser($id)
     {
-        $user = User::find($id);
-        $user->status = 'banned';
-        $user->save();
+        try {
+            $user = User::find($id);
+            $user->status = 'banned';
+            $user->save();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã chặn người dùng',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

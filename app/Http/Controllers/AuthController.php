@@ -11,7 +11,8 @@ use App\Models\User;
 use Exception;
 use Illuminate\Queue\Jobs\JobName;
 use Illuminate\Support\Facades\Validator;
-
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
@@ -130,7 +131,28 @@ class AuthController extends Controller
 
     public function userProfile()
     {
-        $user = response()->json(auth()->user());
+        try {
+            $user = auth()->user();
+
+            if ($user->role == 'jobseeker') {
+                return response()->json([
+                    'user' => $user,
+                    // 'jobseeker' => $user->jobSeeker,
+                ]);
+            } else if ($user->role == 'employer') {
+                return response()->json([
+                    'user' => $user,
+                    'employer' => $user->employer,
+                ]);
+            }
+            return $user;
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => 'false',
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
     protected function createNewToken($token)
