@@ -23,14 +23,14 @@ class MessageFactory extends Factory
      */
     public function definition()
     {
-        $allTitle = array("report", "chat");
-        $allStatus = array("hidden", "unhide");
         $sender_id = User::all()->random()->user_id;
         $receiver_id = User::all()->random()->user_id;
+        $title_list = ['report', 'chat'];
+        $status_list = ['hiden', 'unseen', 'seen'];
         return [
-            'title' => Arr::random($allTitle),
+            'title' => Arr::random($title_list),
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random($allStatus),
+            'status'=> Arr::random($status_list),
             'sender_id' => $sender_id,
             'receiver_id' => $receiver_id
         ];

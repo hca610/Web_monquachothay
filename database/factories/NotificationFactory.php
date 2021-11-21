@@ -23,12 +23,12 @@ class NotificationFactory extends Factory
      */
     public function definition()
     {
-        $allTitle = array("warning", "special", "update");
-        $allStatus = array("hidden", "unhide");
+        $title_list = ['warning', 'special'];
+        $status_list = ['hiden', 'unseen', 'seen'];
         return [
-            'title' => Arr::random($allTitle),
+            'title' => Arr::random($title_list),
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random($allStatus),
+            'status'=> Arr::random($status_list),
             'receiver_id' => User::all()->random()->user_id
         ];
     }
