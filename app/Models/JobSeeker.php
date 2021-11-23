@@ -18,9 +18,8 @@ class JobSeeker extends Model
         return $this->belongsTo(User::class, 'user_id', 'user_id');
     }
 
-
     public function recruitments()
     {
-        return $this->belongsToMany(Recruitment::class)->withPivot('type', 'created_at');
+        return $this->belongsToMany(Recruitment::class)->withPivot('type', 'following', 'created_at');
     }
 }

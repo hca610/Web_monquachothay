@@ -48,15 +48,10 @@ Route::prefix('admin')->group(function ($router) {
 });
 
 # Employer
-// Route::get('/employer', 'EmployerController@search');
-// Route::get('/employer/{employer}', 'EmployerController@show')->middleware('auth:api');
-// Route::post('/employer/{employer}', 'EmployerController@update');
-// Route::put('/employer/{employer}', 'EmployerController@update')->middleware('auth:api');
+
 
 # Jobseeker
-// Route::get('/jobseeker', 'JobSeekerController@search');
-// Route::get('/jobseeker/{jobseeker}', 'JobSeekerController@show')->middleware('auth:api');
-// Route::put('/jobseeker/{jobseeker}', 'JobSeekerController@update')->middleware('auth:api');
+Route::post('jobseeker/follow', 'JobSeekerController@followRecruitment')->middleware('auth:api');
 
 # Category
 Route::get('/category', 'CategoryController@search');
@@ -64,7 +59,7 @@ Route::get('/category', 'CategoryController@search');
 # User
 Route::group([
     'middleware' => 'api',
-    // 'prefix' => 'auth'
+    'prefix' => 'auth'
 
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login'])->name('login');

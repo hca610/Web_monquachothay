@@ -17,7 +17,7 @@ class Recruitment extends Model
     }
 
     public function jobSeekers() {
-        return $this->belongsToMany(JobSeeker::class)->withPivot('type', 'created_at');
+        return $this->belongsToMany(JobSeeker::class)->withPivot('type', 'following', 'created_at');
     }
 
     public function employer() {
