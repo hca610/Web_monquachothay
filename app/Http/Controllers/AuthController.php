@@ -137,7 +137,7 @@ class AuthController extends Controller
             if ($user->role == 'jobseeker') {
                 return response()->json([
                     'user' => $user,
-                    // 'jobseeker' => $user->jobSeeker,
+                    'jobseeker' => $user->jobSeeker,
                 ]);
             } else if ($user->role == 'employer') {
                 return response()->json([
@@ -155,12 +155,13 @@ class AuthController extends Controller
         }
     }
 
+
     protected function createNewToken($token)
     {
         return response()->json([
             'access_token' => $token,
             'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
+            'expires_in' => auth()->factory()->getTTL() * 6000,
             'user' => auth()->user()
         ]);
     }

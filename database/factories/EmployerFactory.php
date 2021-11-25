@@ -22,12 +22,13 @@ class EmployerFactory extends Factory
      */
     public function definition()
     {
+        $userList = User::all()->where('role', 'employer');
         return [
-            'user_id' => User::all()->random()->user_id,
+            'user_id' => $this->faker->unique()->numberBetween(36, 50),
             'about_us' => $this->faker->text(200),
             'image_link' => $this->faker->imageUrl(),
             'num_employee' => $this->faker->randomNumber(),
-            'category_id' => $this->faker->numberBetween(1,10),
+            'category_id' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

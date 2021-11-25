@@ -11,7 +11,7 @@ class JobSeeker extends Model
 
     public $timestamps = false;
     protected $primaryKey = 'job_seeker_id';
-    protected $fillable= ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
+    protected $fillable = ['birthday', 'gender', 'qualification', 'work_experience', 'education', 'skill'];
 
     public function user()
     {
@@ -20,6 +20,7 @@ class JobSeeker extends Model
 
     public function recruitments()
     {
-        return $this->belongsToMany(Recruitment::class)->withPivot('type', 'following', 'created_at');
+        return $this->belongsToMany(Recruitment::class, 'job_seeker_recruitment', 'job_seeker_id', 'recruitment_id')
+            ->withPivot('type', 'following', 'created_at');
     }
 }

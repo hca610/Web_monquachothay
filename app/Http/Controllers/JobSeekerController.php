@@ -2,29 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employer;
-use App\Models\JobSeeker;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class JobSeekerController extends Controller
 {
-    // TODO: them phan  follow, cong viec cac thu
     public function followRecruitment(Request $request)
     {
-        $jobSeeker = auth()->user()->jobSeeker;
-        // return $jobSeeker;
-        
         try {
-            $jobSeeker->recruitments->pivot->job_seeker_id = $jobSeeker->job_seeker_id;
-            $jobSeeker->recruitments->pivot->recruitment_id = $request->recruitment_id;
-            $jobSeeker->recruitments->pivot->following = 1;
-            $jobSeeker->recruitments->pivot->save();
+            $jobSeeker = auth()->user()->jobSeeker;
+            $jobSeeker->recruitments()->syncWithPivotValues([$request->recruitment_id,], ['following' => 1], false);
+
             return response()->json([
                 'success' => true,
-                // 'message' => ''
+                'message' => 'Đã theo dõi công việc',
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -36,10 +28,84 @@ class JobSeekerController extends Controller
 
     public function unfollowRecruitment(Request $request)
     {
-        $jobSeeker = auth()->user()->jobSeeker;
-        $jobSeeker->recruitments->pivot->job_seeker_id = $jobSeeker->job_seeker_id;
-        $jobSeeker->recruitments->pivot->recruitment_id = $request->recruitment_id;
-        $jobSeeker->recruitments->pivot->following = 0;
-        $jobSeeker->recruitments->pivot->save();
+        try {
+            $jobSeeker = auth()->user()->jobSeeker;
+            $recruitmentId = $request->recruitment_id;
+            if ($jobSeeker->recruitments()->where('job_seeker_recruitment.recruitment_id', $recruitmentId)
+                ->get()[0]->pivot->type == NULL) {
+                $jobSeeker->recruitments()->detach($recruitmentId);
+            } else {
+                $jobSeeker->recruitments()->syncWithPivotValues([$recruitmentId], ['following' => 0], false);
+            }
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã bỏ theo dõi công việc ',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function applyRecruitment(Request $request)
+    {
+        try {
+            $jobSeeker = auth()->user()->jobSeeker;
+            $jobSeeker->recruitments()->syncWithPivotValues([$request->recruitment_id,], ['type' => 'pending'], false);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã gửi yêu cầu',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function unApplyRecruitment(Request $request)
+    {
+        try {
+            $recruitmentId = $request->recruitment_id;
+            $jobSeeker = auth()->user()->jobSeeker;
+            if ($jobSeeker->recruitments()->where('job_seeker_recruitment.recruitment_id', $recruitmentId)
+                ->get()[0]->pivot->following == 0) {
+                $jobSeeker->recruitments()->detach($recruitmentId);
+            } else {
+                $jobSeeker->recruitments()->syncWithPivotValues([$recruitmentId], ['type' => NULL], false);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã gửi yêu cầu',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function interestedRecruitments()
+    {
+        try {
+            $jobSeeker = auth()->user()->jobSeeker;
+            $recruitments = $jobSeeker->recruitments;
+
+            return response()->json([
+                'success' => true,
+                'data' => $recruitments,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

@@ -5,6 +5,7 @@ namespace Database\Factories;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 class UserFactory extends Factory
 {
@@ -28,8 +29,8 @@ class UserFactory extends Factory
             'password' => bcrypt('12345678'),
             'phonenumber' => $this->faker->unique()->phoneNumber(),
             'address' => $this->faker->address(),
-            // 'role' => 'employer',
             'role' => 'jobseeker',
+            // 'role' => 'employer',
             'status' => 'active',
         ];
     }

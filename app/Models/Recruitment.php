@@ -12,15 +12,19 @@ class Recruitment extends Model
     protected $primaryKey = 'recruitment_id';
     protected $fillable = ['category_id', 'min_salary', 'job_name', 'detail', 'status', 'requirement', 'address'];
 
-    public function category() {
+    public function category()
+    {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function jobSeekers() {
-        return $this->belongsToMany(JobSeeker::class)->withPivot('type', 'following', 'created_at');
+    public function jobSeekers()
+    {
+        return $this->belongsToMany(JobSeeker::class, 'job_seeker_recruitment', 'recruitment_id', 'job_seeker_id')
+            ->withPivot('type', 'following', 'created_at');
     }
 
-    public function employer() {
-        return $this->belongsTo(Employer::class, 'employer_id');
+    public function employer()
+    {
+        return $this->belongsTo(Employer::class, 'employer_id', 'employer_id');
     }
 }

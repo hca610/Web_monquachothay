@@ -48,19 +48,28 @@ Route::prefix('admin')->group(function ($router) {
 });
 
 # Employer
-
+Route::post('employer/createRecruitment', 'EmployerController@createRecruitment')->middleware('auth:api');
+Route::get('employer/recruitments', 'EmployerController@showRecruitments')->middleware('auth:api');
+Route::post('employer/recruitments', 'EmployerController@changeStatusOfApplication')->middleware('auth:api');
+Route::get('employer/getApplications', 'EmployerController@getApplications')->middleware('auth:api');
 
 # Jobseeker
 Route::post('jobseeker/follow', 'JobSeekerController@followRecruitment')->middleware('auth:api');
+Route::post('jobseeker/unfollow', 'JobSeekerController@unfollowRecruitment')->middleware('auth:api');
+Route::post('jobseeker/apply', 'JobSeekerController@applyRecruitment')->middleware('auth:api');
+Route::post('jobseeker/unApply', 'JobSeekerController@UnApplyRecruitment')->middleware('auth:api');
+Route::get('/jobseeker/interestedRecruitments', 'JobSeekerController@interestedRecruitments')->middleware('auth:api');
 
 # Category
 Route::get('/category', 'CategoryController@search');
+
+#Recruitment
+Route::get('recruitment/{recruitmentId}', 'RecruitmentController@show');
 
 # User
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
-
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register']);

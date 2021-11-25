@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Employer;
 use App\Models\Recruitment;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -22,7 +23,15 @@ class RecruitmentFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'category_id' => $this->faker->numberBetween(1,10),
+            'employer_id' => Employer::all()->random()->employer_id,
+            'min_salary' => $this->faker->numberBetween(1,10)*1000000,
+            'job_name' => $this->faker->jobTitle(),
+            'detail' => $this->faker->realText(),
+            'requirement' => $this->faker->realText(),
+            'address' => $this->faker->address(),
+            'created_at' => $this->faker->dateTime(),
+            'updated_at' => $this->faker->dateTime(),
         ];
     }
 }

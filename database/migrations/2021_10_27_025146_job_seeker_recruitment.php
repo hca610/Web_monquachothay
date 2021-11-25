@@ -13,8 +13,8 @@ class JobSeekerRecruitment extends Migration
             $table->foreignId('job_seeker_id');
             $table->foreignId('recruitment_id');
             $table->enum('type', ['pending', 'reviewed', 'hired', 'rejected'])->nullable();
-            $table->boolean('following')->nullable();
-            $table->timestamp('created_at');
+            $table->boolean('following')->nullable()->default(0);
+            $table->timestamps();
 
             // Foreign key
             $table->foreign('job_seeker_id')
