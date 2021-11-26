@@ -42,9 +42,9 @@ Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports'
 
 # Admin
 Route::prefix('admin')->group(function ($router) {
-    Route::get('/user', 'UserController@search');
-    Route::post('/user/{user}', 'UserController@banUser');
-    Route::get('/user/{user}', 'UserController@show');
+    Route::get('user', 'AdminController@getUserList');
+    Route::post('/user/{user}', 'AdminController@banUser');
+    Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
 });
 
 # Employer
