@@ -41,9 +41,9 @@ Route::get('/report/receiver={receiver_id}/count', 'MessageController@reportCoun
 Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports')->name('Show all reports of an user');
 
 # Admin
-Route::prefix('admin')->group(function ($router) {
+Route::prefix('admin')->middleware('auth:api')->group(function ($router) {
     Route::get('user', 'AdminController@getUserList');
-    Route::post('/user/{user}', 'AdminController@banUser');
+    Route::post('/user/{user}', 'AdminController@changeAccountStatus');
     Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
 });
 
@@ -72,9 +72,11 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     Route::post('/change-password ', [AuthController::class, 'changePassWord']);
 });
+
+

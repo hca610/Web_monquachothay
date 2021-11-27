@@ -9,10 +9,26 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:api');
+    }
+
+    public function isAdmin() {
+        $user = auth()->user();
+        return $user->role == 'admin';
+    }
+
     public function getUserList(Request $request)
     {
+        // if (!$this->isAdmin()) {
+        //     return response()->json([
+        //         'message' => 'khong phai admin',
+        //     ]);
+        // }
+
         try {
-            $users = User::where('name', 'like', "%$request->name%")
+           $users = User::where('name', 'like', "%$request->name%")
                 ->where('phonenumber', 'like', "%$request->phonenumber%")
                 ->where('email', 'like', "%$request->email%")
                 ->where('address', 'like', "%$request->address%")
@@ -32,16 +48,21 @@ class AdminController extends Controller
         }
     }
 
-    public function banUser($id)
+    public function changeAccountStatus($id, Request $request)
     {
         try {
             $user = User::find($id);
-            $user->status = 'banned';
+            $user->status = $request->status;
             $user->save();
+
+            if ($request->status == 'banned')
+                $message = 'Đã chặn người dùng';
+            else if ($request->status == 'active')
+                $message = 'Đã gỡ chặn người dùng';
 
             return response()->json([
                 'success' => true,
-                'message' => 'Đã chặn người dùng',
+                'message' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([

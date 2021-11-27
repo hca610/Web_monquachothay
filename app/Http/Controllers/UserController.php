@@ -71,8 +71,10 @@ class UserController extends Controller
                     'jobseeker' => $jobseeker,
                 ], 201);
             } catch (Exception $e) {
-                // return response()->json(['message' => 'Error']);
-                return $e->getMessage();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đã có lỗi xảy ra',
+                ]);
             }
         } else if ($request->role == 'employer') {
             $validator = Validator::make($request->all(), [
@@ -109,8 +111,10 @@ class UserController extends Controller
                     'employer' => $employer,
                 ], 201);
             } catch (Exception $e) {
-                // return response()->json(['message' => 'Error']);
-                return $e->getMessage();
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Đã có lỗi xảy ra',
+                ]);
             }
         }
     }
@@ -185,6 +189,4 @@ class UserController extends Controller
             'user' => $user,
         ], 201);
     }
-
-
 }
