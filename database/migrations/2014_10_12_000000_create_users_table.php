@@ -15,7 +15,7 @@ class CreateUsersTable extends Migration
             $table->string('name');
             $table->string('phonenumber')->unique();
             $table->string('address');
-            $table->enum('role', ['jobseeker', 'employer']);
+            $table->enum('role', ['jobseeker', 'employer', 'admin']);
             $table->enum('status', ['active', 'banned'])->default('active');
             $table->timestamps();
         });

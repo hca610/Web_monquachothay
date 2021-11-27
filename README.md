@@ -18,10 +18,15 @@ DB_DATABASE=Web_monquachothay
 DB_USERNAME=root
 DB_PASSWORD=[Nhập pass của database nếu có]  
 ```
-Mở terminal, trỏ vào folder project, nhập các lệnh sau để sinh data:  
+Mở terminal, trỏ vào folder project rồi nhập:
 ``` sh
 git checkout dev
 composer install
+``` 
+Tạo 1 schema trong database với tên ```Web_monquachothay```
+
+Quay lại terminal, nhập lệnh sau để sinh data:  
+``` sh
 php artisan migrate && php artisan db:seed
 ```
 Bật server:
