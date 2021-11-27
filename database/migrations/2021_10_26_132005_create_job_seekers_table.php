@@ -11,8 +11,8 @@ class CreateJobSeekersTable extends Migration
         Schema::create('job_seekers', function (Blueprint $table) {
             $table->id('job_seeker_id');
             $table->foreignId('user_id');
-            $table->date('birthday');
-            $table->enum('gender', ['male', 'female', 'other']);
+            $table->date('birthday')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
             $table->string('qualification')->nullable();
             $table->string('work_experience')->nullable();
             $table->string('education')->nullable();

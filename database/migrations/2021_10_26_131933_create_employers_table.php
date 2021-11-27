@@ -11,10 +11,10 @@ class CreateEmployersTable extends Migration
         Schema::create('employers', function (Blueprint $table) {
             $table->id('employer_id');
             $table->foreignId('user_id');
-            $table->string('about_us');
-            $table->string('image_link');
-            $table->integer('num_employee');
-            $table->foreignId('category_id');
+            $table->string('about_us')->nullable();
+            $table->string('image_link')->nullable();
+            $table->integer('num_employee')->nullable();
+            $table->foreignId('category_id')->nullable();
 
             // Foreign key
             $table->foreign('user_id')
