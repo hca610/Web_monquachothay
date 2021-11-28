@@ -23,11 +23,20 @@ Mở terminal, trỏ vào folder project rồi nhập:
 git checkout dev
 composer install
 ``` 
+Sinh khóa 
+```
+php artisan jwt:secret
+```
 Tạo 1 schema trong database với tên ```Web_monquachothay```
 
-Quay lại terminal, nhập lệnh sau để sinh data:  
+Quay lại terminal, nhập lệnh sau để tạo bảng và sinh data:  
 ``` sh
-php artisan migrate && php artisan db:seed
+php artisan migrate 
+php artisan db:seed
+```
+Pull code về trước mỗi lần chạy
+```
+git pull
 ```
 Bật server:
 ``` sh
