@@ -33,87 +33,39 @@ class AuthController extends Controller
         }
 
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng'], 401);
+            return response()->json([
+                'success' => false,
+                'error' => 'Tên đăng nhập hoặc mật khẩu không đúng'
+            ], 401);
         }
 
-        return $this->createNewToken($token);
+        return $newToken = $this->createNewToken($token);
     }
 
     public function register(Request $request)
     {
-        if ($request->role == 'jobseeker') {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|between:2,100',
-                'email' => 'required|string|email|max:100|unique:users',
-                'password' => 'required|string|confirmed|min:6',
-                'phonenumber' => 'required|string',
-                'address' => 'required|string',
-                'role' => 'required|string',
-                'birthday' => 'required|date',
-                'gender' => 'required|string',
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|between:2,100',
+            'email' => 'required|string|email|max:100|unique:users',
+            'password' => 'required|string|confirmed|min:6',
+            'phonenumber' => 'required|string',
+            'role' => 'required|string',
+        ]);
+        try {
+            $user = new User();
+            $user->fill($request->all());
+            $user->password = bcrypt($request->password);
+            $user->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'User successfully registered',
+                'user' => $user,
             ]);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
-            }
-
-            try {
-                $user = new User();
-                $user->fill($request->all());
-                $user->password = bcrypt($request->password);
-                $user->save();
-
-                $jobseeker = new JobSeeker();
-                $jobseeker->fill($request->all());
-                $jobseeker->user_id = $user->user_id;
-                $jobseeker->save();
-
-                return response()->json([
-                    'message' => 'User successfully registered',
-                    'user' => $user,
-                    'jobseeker' => $jobseeker,
-                ], 201);
-            } catch (Exception $e) {
-                // return response()->json(['message' => 'Error']);
-                return $e->getMessage();
-            }
-        } else if ($request->role == 'employer') {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|between:2,100',
-                'email' => 'required|string|email|max:100|unique:users',
-                'password' => 'required|string|confirmed|min:6',
-                'phonenumber' => 'required|string',
-                'address' => 'required|string',
-                'role' => 'required|string',
-                'about_us' => 'required|string',
-                'num_employee' => 'required|integer',
-                'category_id' => 'required|integer',
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
             ]);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
-            }
-
-            try {
-                $user = new User();
-                $user->fill($request->all());
-                $user->password = bcrypt($request->password);
-                $user->save();
-
-                $employer = new Employer();
-                $employer->fill($request->all());
-                $employer->user_id = $user->user_id;
-                $employer->save();
-
-                return response()->json([
-                    'message' => 'User successfully registered',
-                    'user' => $user,
-                    'employer' => $employer,
-                ], 201);
-            } catch (Exception $e) {
-                // return response()->json(['message' => 'Error']);
-                return $e->getMessage();
-            }
         }
     }
 
@@ -136,11 +88,13 @@ class AuthController extends Controller
 
             if ($user->role == 'jobseeker') {
                 return response()->json([
+                    'success' => true,
                     'user' => $user,
                     'jobseeker' => $user->jobSeeker,
                 ]);
             } else if ($user->role == 'employer') {
                 return response()->json([
+                    'success' => true,
                     'user' => $user,
                     'employer' => $user->employer,
                 ]);
@@ -148,13 +102,12 @@ class AuthController extends Controller
             return $user;
         } catch (Exception $e) {
             return response()->json([
-                'success' => 'false',
+                'success' => false,
                 'message' => 'Có lỗi xảy ra',
                 'error' => $e->getMessage(),
             ]);
         }
     }
-
 
     protected function createNewToken($token)
     {
@@ -183,6 +136,7 @@ class AuthController extends Controller
         );
 
         return response()->json([
+            'success' => true,
             'message' => 'User successfully changed password',
             'user' => $user,
         ], 201);
