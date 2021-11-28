@@ -22,23 +22,26 @@ use App\Http\Controllers\AuthController;
 // });
 
 # Notification
-// Route::resource('/notification', NotificationController::class);
-Route::post('notification', 'NotificationController@store')->name('Store Notification');
-Route::put('notification/{notification}', 'NotificationController@update')->name('Update Notification');
-Route::get('notification/{notification}', 'NotificationController@show')->name('Show Notification');
-Route::get('/notification/user/{user_id}', 'NotificationController@showUserNoti')->name('Show user Notifications');
+Route::prefix('notification')->middleware('auth:api')->group(function ($router) {
+    Route::post('/', 'NotificationController@store')->name('Store Notification');
+    Route::put('/', 'NotificationController@update')->name('Update Notification');
+    Route::get('/{notification}', 'NotificationController@show')->name('Show Notification');
+    Route::get('/user/{user_id}', 'NotificationController@showUserNoti')->name('Show user Notifications');
+});
 
 # Message
-// Route::resource('/message', MessageController::class);
-Route::post('message', 'MessageController@store')->name('Store Message');
-Route::put('message/{message}', 'MessageController@update')->name('Update Message');
-Route::get('message/{message}', 'MessageController@show')->name('Show Message');
-Route::get('/message/between/sender={sender_id}&receiver={receiver_id}', 'MessageController@showUsersMessage')->name('Show Messages between users');
+Route::prefix('message')->middleware('auth:api')->group(function ($router) {
+    Route::post('/', 'MessageController@store')->name('Store Message');
+    Route::put('/{message}', 'MessageController@update')->name('Update Message');
+    Route::get('/{message}', 'MessageController@show')->name('Show Message');
+    Route::get('/between/sender={sender_id}&receiver={receiver_id}', 'MessageController@showUsersMessage')->name('Show Messages between users');
+});
 
 # Report
-// Route::redirect('/message/user/sender={sender_id}', '/message/between/sender={sender_id}&receiver=0');
-Route::get('/report/receiver={receiver_id}/count', 'MessageController@reportCount')->name('Count user Reported');
-Route::get('/report/receiver={receiver_id}/all', 'MessageController@showReports')->name('Show all reports of an user');
+Route::prefix('report')->middleware('auth:api')->group(function ($router) {
+    Route::get('/receiver={receiver_id}/count', 'MessageController@reportCount')->name('Count user Reported');
+    Route::get('/receiver={receiver_id}/all', 'MessageController@showReports')->name('Show all reports of an user');
+});
 
 # Admin
 Route::prefix('admin')->middleware('auth:api')->group(function ($router) {

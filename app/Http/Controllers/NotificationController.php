@@ -2,116 +2,92 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Notification;
+use Exception;
+use Illuminate\Http\Request;
+
 
 class NotificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        $notifications = Notification::simplePaginate(10);
-        return response()->json($notifications);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $notification = new Notification;
-        $notification->title = $request->input('title');
-        $notification->detail = $request->input('detail');
-        $notification->status = $request->input('status');
-        $notification->receiver_id = $request->input('receiver_id');
-        $notification->save();
-        return response()->json($notification);
+        try {
+            $notification = new Notification;
+            $notification->title = $request->input('title');
+            $notification->detail = $request->input('detail');
+            $notification->status = $request->input('status');
+            $notification->receiver_id = $request->input('receiver_id');
+            $notification->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Tao thong bao thanh cong',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tao thong bao khong thanh cong',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        $notification = Notification::find($id);
-        return response()->json($notification);
+        try {
+            $notification = Notification::find($id);
+            return response()->json([
+                'success' => true,
+                'data' => $notification,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi tim kiem',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
+    public function update(Request $request)
     {
-        //
+        try {
+            $notification = Notification::find($request->input('notification_id'));
+            $notification->title = $request->input('title');
+            $notification->detail = $request->input('detail');
+            $notification->status = $request->input('status');
+            $notification->receiver_id = $request->input('receiver_id');
+            $notification->save();
+            return response()->json([
+                'success' => true,
+                'message' => 'Cap nhat thanh cong',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Cap nhat khong thanh cong',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        $notification = Notification::find($id);
-        $notification->title = $request->input('title');
-        $notification->detail = $request->input('detail');
-        $notification->status = $request->input('status');
-        $notification->receiver_id = $request->input('receiver_id');
-        $notification->save();
-        return response()->json($notification);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        // $notification = Notification::find($id)->delete;
-        // Notification::truncate();
-        // return response()->json($notification);
-    }
-
-    /**
-     * Return all notifications user $user_id received in lastest create time order.
-     *
-     * @param  int  $user_id
-     * @return \Illuminate\Http\Response
-     */
     public function showUserNoti($user_id)
     {
-        $alluser_id = 0;
-        $notifications = Notification::orderBy('created_at', 'desc')
+        try {
+            $alluser_id = 0;
+            $notifications = Notification::orderBy('created_at', 'desc')
             ->where('receiver_id', $user_id)
             ->orWhere('receiver_id', $alluser_id)
             ->simplePaginate(10);
-        return response()->json($notifications);
+            return response()->json([
+                'success' => true,
+                'data' => $notifications,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
