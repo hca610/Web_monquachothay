@@ -56,6 +56,18 @@ class AuthController extends Controller
             $user->fill($request->all());
             $user->password = bcrypt($request->password);
             $user->save();
+
+            if ($request->role == 'jobseeker') {
+                $jobSeeker = new JobSeeker();
+                $jobSeeker->user_id = $user->user_id;
+                $jobSeeker->save();
+            }
+            else if ($request->role == 'employer') {
+                $employer = new Employer();
+                $employer->user_id = $user->user_id;
+                $employer->save();
+            }
+
             return response()->json([
                 'success' => true,
                 'message' => 'User successfully registered',
