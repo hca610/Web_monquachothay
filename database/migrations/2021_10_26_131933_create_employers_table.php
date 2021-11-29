@@ -14,13 +14,11 @@ class CreateEmployersTable extends Migration
             $table->string('about_us')->nullable();
             $table->string('image_link')->nullable();
             $table->integer('num_employee')->nullable();
-            $table->foreignId('category_id')->nullable();
+            $table->string('category')->nullable();
 
             // Foreign key
             $table->foreign('user_id')
                 ->references('user_id')->on('users');
-            $table->foreign('category_id')
-                ->references('category_id')->on('categories');
         });
     }
 

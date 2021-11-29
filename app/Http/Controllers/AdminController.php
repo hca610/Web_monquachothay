@@ -14,22 +14,23 @@ class AdminController extends Controller
         $this->middleware('auth:api');
     }
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         $user = auth()->user();
         return $user->role == 'admin';
     }
 
     public function getUserList(Request $request)
     {
-        // if (!$this->isAdmin()) {
-        //     return response()->json([
-        //         'message' => 'khong phai admin',
-        //     ]);
-        // }
+        if (!$this->isAdmin()) {
+            return response()->json([
+                'message' => 'khong phai admin',
+            ]);
+        }
 
         $searchContent = $request->searchContent;
         try {
-           $users = User::where('name', 'like', "%$searchContent%")
+            $users = User::where('name', 'like', "%$searchContent%")
                 ->orWhere('phonenumber', 'like', "%$searchContent%")
                 ->orWhere('email', 'like', "%$searchContent%")
                 ->orWhere('address', 'like', "%$searchContent%")
@@ -51,6 +52,12 @@ class AdminController extends Controller
 
     public function changeAccountStatus($id, Request $request)
     {
+        if (!$this->isAdmin()) {
+            return response()->json([
+                'message' => 'khong phai admin',
+            ]);
+        }
+
         try {
             $user = User::find($id);
             $user->status = $request->status;
@@ -76,6 +83,12 @@ class AdminController extends Controller
 
     public function showDetailOfAUser($id)
     {
+        if (!$this->isAdmin()) {
+            return response()->json([
+                'message' => 'khong phai admin',
+            ]);
+        }
+
         try {
             $user = User::findOrFail($id);
 

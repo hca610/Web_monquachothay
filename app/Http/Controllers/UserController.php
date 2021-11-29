@@ -38,21 +38,6 @@ class UserController extends Controller
     public function register(Request $request)
     {
         if ($request->role == 'jobseeker') {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|between:2,100',
-                'email' => 'required|string|email|max:100|unique:users',
-                'password' => 'required|string|confirmed|min:6',
-                'phonenumber' => 'required|string',
-                'address' => 'required|string',
-                'role' => 'required|string',
-                'birthday' => 'required|date',
-                'gender' => 'required|string',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
-            }
-
             try {
                 $user = new User();
                 $user->fill($request->all());
@@ -77,22 +62,6 @@ class UserController extends Controller
                 ]);
             }
         } else if ($request->role == 'employer') {
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|between:2,100',
-                'email' => 'required|string|email|max:100|unique:users',
-                'password' => 'required|string|confirmed|min:6',
-                'phonenumber' => 'required|string',
-                'address' => 'required|string',
-                'role' => 'required|string',
-                'about_us' => 'required|string',
-                'num_employee' => 'required|integer',
-                'category_id' => 'required|integer',
-            ]);
-
-            if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
-            }
-
             try {
                 $user = new User();
                 $user->fill($request->all());

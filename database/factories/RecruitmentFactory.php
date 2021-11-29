@@ -23,7 +23,7 @@ class RecruitmentFactory extends Factory
     public function definition()
     {
         return [
-            'category_id' => $this->faker->numberBetween(1,10),
+            'category' => $this->faker->text(10),
             'employer_id' => Employer::all()->random()->employer_id,
             'min_salary' => $this->faker->numberBetween(1,10)*1000000,
             'job_name' => $this->faker->jobTitle(),

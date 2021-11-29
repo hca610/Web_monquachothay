@@ -10,7 +10,7 @@ class CreateRecruitmentsTable extends Migration
     {
         Schema::create('recruitments', function (Blueprint $table) {
             $table->id('recruitment_id');
-            $table->foreignId('category_id');
+            $table->string('category');
             $table->foreignId('employer_id');
             $table->integer('min_salary');
             $table->string('job_name');
@@ -20,8 +20,6 @@ class CreateRecruitmentsTable extends Migration
             $table->string('address');
             $table->timestamps();
 
-            $table->foreign('category_id')
-                ->references('category_id')->on('categories');
             $table->foreign('employer_id')
                 ->references('employer_id')->on('employers');
 
