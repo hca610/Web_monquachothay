@@ -69,6 +69,7 @@ Route::get('/category', 'CategoryController@search');
 #Recruitment
 Route::get('recruitment', 'RecruitmentController@showAllRecruitment');
 Route::get('recruitment/{recruitmentId}', 'RecruitmentController@show');
+Route::post('recruitment/{recruitmentId}', 'RecruitmentController@update')->middleware('auth:api');
 
 # User
 Route::group([
