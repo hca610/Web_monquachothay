@@ -64,6 +64,7 @@ Route::get('/jobseeker/interestedRecruitments', 'JobSeekerController@interestedR
 Route::get('/category', 'CategoryController@search');
 
 #Recruitment
+Route::get('recruitment','RecruitmentController@showAllRecruitment');
 Route::get('recruitment/{recruitmentId}', 'RecruitmentController@show');
 
 # User
@@ -77,6 +78,7 @@ Route::group([
     Route::post('/refresh', [AuthController::class, 'refresh']);
     Route::get('/user-profile', [AuthController::class, 'userProfile']);
     Route::post('/change-password ', [AuthController::class, 'changePassWord']);
+    Route::post('/user-profile', [AuthController::class, 'updateProfile']);
 });
 
 

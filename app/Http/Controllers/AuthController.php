@@ -61,8 +61,7 @@ class AuthController extends Controller
                 $jobSeeker = new JobSeeker();
                 $jobSeeker->user_id = $user->user_id;
                 $jobSeeker->save();
-            }
-            else if ($request->role == 'employer') {
+            } else if ($request->role == 'employer') {
                 $employer = new Employer();
                 $employer->user_id = $user->user_id;
                 $employer->save();
@@ -77,6 +76,7 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -116,6 +116,33 @@ class AuthController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $user->fill($request->all());
+            $user->save();
+
+            if ($user->role == 'jobseeker') {
+                $user->jobSeeker->fill($request->all());
+                $user->jobSeeker->save();
+            } else if ($user->role == 'employer') {
+                $user->employer->fill($request->all());
+                $user->employer->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật thành công',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
                 'error' => $e->getMessage(),
             ]);
         }

@@ -33,6 +33,7 @@ class EmployerController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -103,17 +104,17 @@ class EmployerController extends Controller
         try {
             $employer = auth()->user()->employer;
             $recruitments = $employer->recruitments;
-            $collection = new Collection();
+            $listApplication= new Collection();
 
             foreach ($recruitments as $recruitment) {
-                $collection->push(DB::table('job_seeker_recruitment')
+                $listApplication->push(DB::table('job_seeker_recruitment')
                 ->where('recruitment_id', $recruitment->recruitment_id)
                 ->where('type', '<>', '')
                 ->get());
             }
             return response()->json([
                 'success' => true,
-                'data' => $collection,
+                'data' => $listApplication,
             ]);
         } catch (Exception $e) {
             return response()->json([

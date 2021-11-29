@@ -8,6 +8,10 @@ use Illuminate\Http\Request;
 
 class RecruitmentController extends Controller
 {
+    public function showAllRecruitment() {
+        return Recruitment::paginate(20)->sortByDesc('created_at');
+    }
+
     public function show($recruitmentId)
     {
         try {

@@ -27,13 +27,14 @@ class AdminController extends Controller
         //     ]);
         // }
 
+        $searchContent = $request->searchContent;
         try {
-           $users = User::where('name', 'like', "%$request->name%")
-                ->where('phonenumber', 'like', "%$request->phonenumber%")
-                ->where('email', 'like', "%$request->email%")
-                ->where('address', 'like', "%$request->address%")
-                ->where('status', 'like', "%$request->status%")
-                ->where('role', 'like', "%$request->role%")
+           $users = User::where('name', 'like', "%$searchContent%")
+                ->orWhere('phonenumber', 'like', "%$searchContent%")
+                ->orWhere('email', 'like', "%$searchContent%")
+                ->orWhere('address', 'like', "%$searchContent%")
+                ->orWhere('status', 'like', "%$searchContent%")
+                ->orWhere('role', 'like', "%$searchContent%")
                 ->paginate(20);
 
             return response()->json([
