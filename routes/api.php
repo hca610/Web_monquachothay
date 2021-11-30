@@ -66,10 +66,10 @@ Route::get('/jobseeker/interestedRecruitments', 'JobSeekerController@interestedR
 # Category
 Route::get('/category', 'CategoryController@search');
 
-#Recruitment
+# Recruitment
 Route::get('recruitment', 'RecruitmentController@showAllRecruitment');
 Route::get('recruitment/{recruitmentId}', 'RecruitmentController@show');
-Route::post('recruitment/{recruitmentId}', 'RecruitmentController@update')->middleware('auth:api');
+Route::post('recruitment/{recruitmentId}', 'EmployerController@updateRecruitment')->middleware('auth:api');
 
 # User
 Route::group([

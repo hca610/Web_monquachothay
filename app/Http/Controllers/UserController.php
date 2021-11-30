@@ -126,7 +126,6 @@ class UserController extends Controller
         }
     }
 
-
     protected function createNewToken($token)
     {
         return response()->json([

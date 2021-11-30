@@ -58,24 +58,21 @@ class EmployerController extends Controller
         }
     }
 
-    public function changeStatusOfRecruitment($recruitmentId)
+    public function updateRecruitment(Request $request, $id)
     {
         try {
-            $recruitment = Recruitment::findOrFail($recruitmentId);
-            if ($recruitment->status == 'opening') {
-                $recruitment->status = 'closed';
-            } else {
-                $recruitment->status = 'opening';
-            }
+            $recruitment = Recruitment::find($id);
+            $recruitment->fill($request->all());
+            $recruitment->save();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Đổi trạng thái thành công',
+                'message' => 'Cập nhật thành công',
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => 'Có lỗi xảy ra',
             ]);
         }
     }
@@ -86,7 +83,11 @@ class EmployerController extends Controller
             $jobSeeker = JobSeeker::findOrFail($request->job_seeker_id);
             $recruitment = Recruitment::findOrFail($request->recruitment_id);
 
-            $recruitment->jobSeekers()->syncWithPivotValues([$jobSeeker->job_seeker_id], ['type' => $request->status], false);
+            $recruitment->jobSeekers()->syncWithPivotValues(
+                [$jobSeeker->job_seeker_id],
+                ['type' => $request->status],
+                false
+            );
 
             return response()->json([
                 'success' => true,
@@ -104,13 +105,13 @@ class EmployerController extends Controller
         try {
             $employer = auth()->user()->employer;
             $recruitments = $employer->recruitments;
-            $listApplication= new Collection();
+            $listApplication = new Collection();
 
             foreach ($recruitments as $recruitment) {
                 $listApplication->push(DB::table('job_seeker_recruitment')
-                ->where('recruitment_id', $recruitment->recruitment_id)
-                ->where('type', '<>', '')
-                ->get());
+                    ->where('recruitment_id', $recruitment->recruitment_id)
+                    ->where('type', '<>', '')
+                    ->get());
             }
             return response()->json([
                 'success' => true,
@@ -123,4 +124,6 @@ class EmployerController extends Controller
             ]);
         }
     }
+
+
 }
