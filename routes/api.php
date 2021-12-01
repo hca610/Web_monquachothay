@@ -25,8 +25,9 @@ use App\Http\Controllers\UserController;
 Route::prefix('notification')
 ->middleware('auth:api')
 ->group(function ($router) {
-    Route::get('/', 'NotificationController@showAllNotification')->name('Show All Notifications');
-    Route::post('/', 'NotificationController@createAndUpdateNotification')->name('Create and Update Notification');
+    Route::get('/all', 'NotificationController@showAllNotification')->name('Show All Notifications');
+    Route::post('/create', 'NotificationController@createNotification')->name('Create Notification');
+    Route::post('/update', 'NotificationController@updateNotification')->name('Update Notification');
     Route::get('/notification_id={notification}', 'NotificationController@showNotification')->name('Show Notification');
     Route::get('/user', 'NotificationController@showUserNotification')->name('Show user Notifications');
 });
