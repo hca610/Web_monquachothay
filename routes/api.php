@@ -31,7 +31,7 @@ Route::prefix('notification')
     Route::get('/user', 'NotificationController@showUserNotification')->name('Show user Notifications');
 });
 
-# Message eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYzODI1MDQwNSwiZXhwIjoxNjM4MjU0MDA1LCJuYmYiOjE2MzgyNTA0MDUsImp0aSI6IkFBNEppb29Ka1J2dUJ0ODAiLCJzdWIiOjUxLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.MWhsUqf_-hoMhGyHu52ixoZqhHExGDqnJhL_1m4hZao
+# Message
 Route::prefix('message')->middleware('auth:api')->group(function ($router) {
     Route::post('/', 'MessageController@store')->name('Store Message');
     Route::put('/{message}', 'MessageController@update')->name('Update Message');
