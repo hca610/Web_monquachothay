@@ -5,11 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Recruitment;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RecruitmentController extends Controller
 {
-    public function showAllRecruitment() {
-        return Recruitment::paginate(20)->sortByDesc('created_at');
+    public function showAllRecruitment()
+    {
+        return DB::table('recruitments')
+            ->join('employers', 'recruitments.employer_id', '=', 'employers.employer_id')
+            ->get();
     }
 
     public function show($recruitmentId)
@@ -30,10 +34,5 @@ class RecruitmentController extends Controller
         }
     }
 
-    public function update(Request $request, $id)
-    {
-        $recruitment = Recruitment::find($id);
-        $recruitment->fill($request->all());
-        $recruitment->save();
-    }
+   
 }

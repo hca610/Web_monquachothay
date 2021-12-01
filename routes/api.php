@@ -4,7 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,20 +68,21 @@ Route::get('/jobseeker/interestedRecruitments', 'JobSeekerController@interestedR
 # Category
 Route::get('/category', 'CategoryController@search');
 
-#Recruitment
+# Recruitment
 Route::get('recruitment', 'RecruitmentController@showAllRecruitment');
 Route::get('recruitment/{recruitmentId}', 'RecruitmentController@show');
+Route::post('recruitment/{recruitmentId}', 'EmployerController@updateRecruitment')->middleware('auth:api');
 
 # User
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::post('/refresh', [AuthController::class, 'refresh']);
-    Route::get('/user-profile', [AuthController::class, 'userProfile']);
-    Route::post('/change-password ', [AuthController::class, 'changePassWord']);
-    Route::post('/user-profile', [AuthController::class, 'updateProfile']);
+    Route::post('/login', [UserController::class, 'login'])->name('login');
+    Route::post('/register', [UserController::class, 'register'])->name('register');
+    Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::post('/refresh', [UserController::class, 'refresh']);
+    Route::get('/user-profile', [UserController::class, 'userProfile']);
+    Route::post('/change-password ', [UserController::class, 'changePassWord']);
+    Route::post('/user-profile', [UserController::class, 'updateProfile']);
 });
