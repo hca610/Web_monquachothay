@@ -19,9 +19,9 @@ class CreateMessagesTable extends Migration
             $table->enum('title', $title_list);
             $table->string('detail');
             // $table->string('status');
-            $table->enum('status', $status_list);
+            $table->enum('status', $status_list)->default('unseen');
             $table->foreignId('sender_id');
-            $table->foreignId('receiver_id');
+            $table->foreignId('receiver_id')->default(0);
             $table->timestamps();
 
             // Foreign key
