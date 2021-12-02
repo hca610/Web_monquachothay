@@ -13,14 +13,14 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $title_list = ['normal', 'warning', 'special'];
-            $status_list = ['hiden', 'unseen', 'seen'];
+            $status_list = ['hidden', 'unseen', 'seen'];
             $table->id('notification_id');
             $table->enum('title', $title_list)->default('normal');
             $table->string('detail')->default("There is nothing in this notification");
             $table->enum('status', $status_list)->default('unseen');
             $table->foreignId('receiver_id')->default(1);
             $table->timestamps();
-            
+
             // Foreign key
             $table->foreign('receiver_id')
                 ->references('user_id')->on('users');
