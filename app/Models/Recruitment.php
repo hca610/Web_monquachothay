@@ -11,6 +11,7 @@ class Recruitment extends Model
 
     protected $primaryKey = 'recruitment_id';
     protected $fillable = ['category', 'min_salary', 'job_name', 'detail', 'status', 'requirement', 'address'];
+    protected $hidden = ['employer'];
 
     public function jobSeekers()
     {

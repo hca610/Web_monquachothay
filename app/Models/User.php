@@ -13,11 +13,6 @@ class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
     protected $fillable = [
         'name',
         'email',
@@ -28,11 +23,7 @@ class User extends Authenticatable implements JWTSubject
     ];
 
     protected $primaryKey = 'user_id';
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
+
     protected $hidden = [
         'password',
         'remember_token',
@@ -40,11 +31,6 @@ class User extends Authenticatable implements JWTSubject
         'employer',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
@@ -68,7 +54,6 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasOne(JobSeeker::class, 'user_id');
     }
-
 
     public function getJWTIdentifier()
     {
