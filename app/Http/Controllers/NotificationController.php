@@ -16,7 +16,7 @@ class NotificationController extends Controller
                 throw new Exception('Ban khong phai la admin');
             }
 
-            $notifications = Notification::paginate(20)->sortByDesc('created_at');
+            $notifications = Notification::orderByDesc('created_at')->paginate(20);
             return response()->json([
                 'success' => true,
                 'data' => $notifications
@@ -30,16 +30,29 @@ class NotificationController extends Controller
         }
     }
 
-    public function createNotification(Request $request)
+    function create(array $arr)
     {
         try {
             $notification = new Notification;
-            $notification->fill($request->all());
+            $notification->fill($arr);
             $notification->save();
+            return $notification;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function createNotification(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            if ($user->role != 'admin') {
+                throw new Exception('Ban khong phai la admin');
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Tao thong bao thanh cong',
-                'data' => $notification
+                'data' => $this->create($request->all()),
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -50,16 +63,29 @@ class NotificationController extends Controller
         }
     }
 
+    function update(array $arr)
+    {
+        try {
+            $notification = Notification::findOrFail($arr['notification_id']);
+            $notification->fill($arr);
+            $notification->save();
+            return $notification;
+        } catch (Exception $e) {
+            throw $e;
+        }
+    }
+
     public function updateNotification(Request $request)
     {
         try {
-            $notification = Notification::findOrFail($request->input('notification_id'));
-            $notification->fill($request->all());
-            $notification->save();
+            $user = auth()->user();
+            if ($user->role != 'admin') {
+                throw new Exception('Ban khong phai la admin');
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Cap nhat thong bao thanh cong',
-                'data' => $notification,
+                'data' => $this->update($request->all()),
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -70,30 +96,14 @@ class NotificationController extends Controller
         }
     }
 
-    public function createAndUpdateNotification(Request $request)
+    public function showNotification($id)
     {
         try {
             $user = auth()->user();
             if ($user->role != 'admin') {
                 throw new Exception('Ban khong phai la admin');
             }
-            
-            if ($request->notification_id == null)
-                return $this->createNotification($request);
-            else
-                return $this->updateNotification($request);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Xu ly thong bao khong thanh cong',
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
 
-    public function showNotification($id)
-    {
-        try {
             $notification = Notification::findOrFail($id);
             return response()->json([
                 'success' => true,
@@ -118,8 +128,8 @@ class NotificationController extends Controller
             $notifications = Notification::
             where('receiver_id', $user_id)
             ->orWhere('receiver_id', $alluser_id)
-            ->paginate(20)
-            ->sortByDesc('created_at');
+            ->orderByDesc('created_at')
+            ->paginate(20);
             return response()->json([
                 'success' => true,
                 'data' => $notifications,
