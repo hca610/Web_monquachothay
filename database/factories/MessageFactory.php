@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
+use CreateMessagesTable;
+
 class MessageFactory extends Factory
 {
     /**
@@ -23,16 +25,12 @@ class MessageFactory extends Factory
      */
     public function definition()
     {
-        $sender_id = User::all()->random()->user_id;
-        $receiver_id = User::all()->random()->user_id;
-        $title_list = ['report', 'chat'];
-        $status_list = ['hiden', 'unseen', 'seen'];
         return [
-            'title' => Arr::random($title_list),
+            'type' => Arr::random(CreateMessagesTable::$type_list),
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random($status_list),
-            'sender_id' => $sender_id,
-            'receiver_id' => $receiver_id
+            'status'=> Arr::random(CreateMessagesTable::$status_list),
+            'sender_id' => User::all()->random()->user_id,
+            'receiver_id' => User::all()->random()->user_id
         ];
     }
 }

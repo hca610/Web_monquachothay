@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
+use CreateNotificationsTable;
+
 class NotificationFactory extends Factory
 {
     /**
@@ -27,7 +29,7 @@ class NotificationFactory extends Factory
         return [
             'title' => $this->faker->text(20),
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random($status_list),
+            'status'=> Arr::random(CreateNotificationsTable::$status_list),
             'receiver_id' => User::all()->random()->user_id
         ];
     }
