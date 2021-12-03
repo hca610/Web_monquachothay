@@ -23,10 +23,9 @@ class NotificationFactory extends Factory
      */
     public function definition()
     {
-        $title_list = ['warning', 'special'];
-        $status_list = ['hiden', 'unseen', 'seen'];
+        $status_list = ['hidden', 'unseen', 'seen'];
         return [
-            'title' => Arr::random($title_list),
+            'title' => $this->faker->text(20),
             'detail' => $this->faker->text(200),
             'status'=> Arr::random($status_list),
             'receiver_id' => User::all()->random()->user_id

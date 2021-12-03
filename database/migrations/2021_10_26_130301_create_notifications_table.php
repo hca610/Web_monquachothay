@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateNotificationsTable extends Migration
 {
-    public $title_list = ['warning', 'special'];
     public $status_list = ['hiden', 'unseen', 'seen'];
 
     public function up()
@@ -15,7 +14,7 @@ class CreateNotificationsTable extends Migration
             $title_list = ['normal', 'warning', 'special'];
             $status_list = ['hidden', 'unseen', 'seen'];
             $table->id('notification_id');
-            $table->enum('title', $title_list)->default('normal');
+            $table->string('title');
             $table->string('detail')->default("There is nothing in this notification");
             $table->enum('status', $status_list)->default('unseen');
             $table->foreignId('receiver_id')->default(1);

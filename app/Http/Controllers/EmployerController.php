@@ -93,10 +93,25 @@ class EmployerController extends Controller
                 false
             );
 
+            switch ($request->status) {
+                case 'reviewed':
+                    $titleNotification = 'Hồ sơ của bạn đã được duyệt';
+                    $detailNotification = 'Hồ sơ của bạn đã được duyệt ở công việc ' . $recruitment->job_name;
+                    break;
+                case 'hired':
+                    $titleNotification = 'Bạn đã được nhận vào làm!';
+                    $detailNotification = 'Bạn đã được nhận vào làm ở công việc ' . $recruitment->job_name;
+                    break;
+                case 'rejected':
+                    $titleNotification = 'Hồ sơ của bạn đã bị từ chối';
+                    $detailNotification = 'Hồ sơ của bạn đã bị từ chối ở công việc ' . $recruitment->job_name;
+                    break;
+            }
+
             NotificationController::create([
-                'title' => 'warning',
+                'title' => $titleNotification,
                 'status' => 'unseen',
-                'detail' => 'Ho so cua ban da dc xem xet',
+                'detail' => $detailNotification,
                 'receiver_id' => $jobSeeker->job_seeker_id,
             ]);
 
