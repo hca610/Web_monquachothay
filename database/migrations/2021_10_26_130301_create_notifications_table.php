@@ -6,17 +6,15 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateNotificationsTable extends Migration
 {
-    public $status_list = ['hiden', 'unseen', 'seen'];
+    public static $status_list = ['hidden', 'unseen', 'seen'];
 
     public function up()
     {
         Schema::create('notifications', function (Blueprint $table) {
-            $title_list = ['normal', 'warning', 'special'];
-            $status_list = ['hidden', 'unseen', 'seen'];
             $table->id('notification_id');
-            $table->string('title');
+            $table->string('title')->default("A short description about this notification");
             $table->string('detail')->default("There is nothing in this notification");
-            $table->enum('status', $status_list)->default('unseen');
+            $table->enum('status', $this::$status_list)->default('unseen');
             $table->foreignId('receiver_id')->default(1);
             $table->timestamps();
 

@@ -6,22 +6,18 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateMessagesTable extends Migration
 {
-    public $title_list = ['report', 'chat'];
-    public $status_list = ['hiden', 'unseen', 'seen'];
+    public static $type_list = ['report', 'chat'];
+    public static $status_list = ['hidden', 'unseen', 'seen'];
 
     public function up()
     {
         Schema::create('messages', function (Blueprint $table) {
-            $title_list = ['report', 'chat'];
-            $status_list = ['hiden', 'unseen', 'seen'];
             $table->id('message_id');
-            // $table->string('title');
-            $table->enum('title', $title_list);
-            $table->string('detail');
-            // $table->string('status');
-            $table->enum('status', $status_list)->default('unseen');
-            $table->foreignId('sender_id');
-            $table->foreignId('receiver_id')->default(0);
+            $table->enum('type', $this::$type_list)->default('chat');
+            $table->string('detail')->default("There is nothing in this message");
+            $table->enum('status', $this::$status_list)->default('unseen');
+            $table->foreignId('sender_id')->default(1);
+            $table->foreignId('receiver_id')->default(1);
             $table->timestamps();
 
             // Foreign key
