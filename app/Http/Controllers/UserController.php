@@ -138,23 +138,66 @@ class UserController extends Controller
 
     public function changePassWord(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'old_password' => 'required|string|min:6',
-            'new_password' => 'required|string|confirmed|min:6',
-        ]);
+        try {
+            $validator = Validator::make($request->all(), [
+                'old_password' => 'required|string|min:6',
+                'new_password' => 'required|string|min:6',
+            ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            if ($validator->fails()) {
+                throw new Exception();
+            }
+            $userId = auth()->user()->user_id;
+
+            if (bcrypt($request->old_password) != auth()->user()->password) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Mật khẩu cũ không đúng',
+                ]);
+            }
+            $user = User::where('user_id', $userId)->update(
+                ['password' => bcrypt($request->new_password)]
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đổi mật khẩu thành công',
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Đổi mật khẩu không thành công',
+            ]);
         }
-        $userId = auth()->user()->user_id;
+    }
 
-        $user = User::where('user_id', $userId)->update(
-            ['password' => bcrypt($request->new_password)]
-        );
+    public function updateProfile(Request $request)
+    {
+        try {
+            $user = auth()->user();
+            $user->fill($request->all());
 
-        return response()->json([
-            'message' => 'User successfully changed password',
-            'user' => $user,
-        ], 201);
+            if ($user->role == 'jobseeker') {
+                $jobSeeker = $user->jobSeeker;
+                $jobSeeker->fill($request->all());
+                $user->save();
+                $jobSeeker->save();
+            } else if ($user->role == 'employer') {
+                $user->employer->fill($request->all());
+                $user->save();
+                $user->employer->save();
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Cập nhật hồ sơ thành công',
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

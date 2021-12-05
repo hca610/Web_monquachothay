@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
+    // }
 
     public function isAdmin()
     {
@@ -83,12 +83,6 @@ class AdminController extends Controller
 
     public function showDetailOfAUser($id)
     {
-        if (!$this->isAdmin()) {
-            return response()->json([
-                'message' => 'khong phai admin',
-            ]);
-        }
-
         try {
             $user = User::findOrFail($id);
 
