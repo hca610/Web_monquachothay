@@ -6,9 +6,35 @@ use App\Models\Message;
 use Exception;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\UserController;
+
 class MessageController extends Controller
 {
-    public function store(Request $request)
+    protected function create(array $arr)
+    {
+        $message = new Message;
+        $message->fill($arr);
+        $message->save();
+        return $message;
+    }
+
+    protected function update(array $arr)
+    {
+        $message = Message::findOrFail($arr['message_id']);
+        $message->fill($arr);
+        $message->save();
+        return $message;
+    }
+
+    protected function show($id)
+    {
+        $message = Message::find($id);
+        return $message;
+    }
+
+    //________________________________________________________________________________________________________________________
+
+    public function createMessage(Request $request)
     {
         try {
             $message = new Message;
@@ -31,24 +57,7 @@ class MessageController extends Controller
         }
     }
 
-    public function show($id)
-    {
-        try {
-            $message = Message::find($id);
-            return response()->json([
-                'success' => true,
-                'data' => $message,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tim kiem khong thanh cong',
-                'error' => $e->getMessage(),
-            ]);
-        }
-    }
-
-    public function update(Request $request)
+    public function updateMessage(Request $request)
     {
         try {
             $message = Message::find($request->input('message_id'));
@@ -121,13 +130,13 @@ class MessageController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem to cao thanh cong',
+                'message' => 'Tim kiem phan hoi thanh cong',
                 'data' => $reports,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tim kiem to cao that bai',
+                'message' => 'Tim kiem phan hoi that bai',
             ]);
         }
     }
