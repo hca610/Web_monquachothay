@@ -55,7 +55,7 @@ Route::prefix('report')->middleware('auth:api')->group(function ($router) {
 Route::prefix('admin')->middleware('auth:api')->group(function ($router) {
     Route::get('user', 'AdminController@getUserList');
     Route::post('/user/{user}', 'AdminController@changeAccountStatus');
-    Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
+    // Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
 });
 
 # Employer
@@ -70,9 +70,6 @@ Route::post('jobseeker/unfollow', 'JobSeekerController@unfollowRecruitment')->mi
 Route::post('jobseeker/apply', 'JobSeekerController@applyRecruitment')->middleware('auth:api');
 Route::post('jobseeker/unApply', 'JobSeekerController@UnApplyRecruitment')->middleware('auth:api');
 Route::get('/jobseeker/interestedRecruitments', 'JobSeekerController@interestedRecruitments')->middleware('auth:api');
-
-# Category
-Route::get('/category', 'CategoryController@search');
 
 # Recruitment
 Route::get('recruitment', 'RecruitmentController@showAllRecruitment');
@@ -89,6 +86,10 @@ Route::group([
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
     Route::post('/refresh', [UserController::class, 'refresh']);
     Route::get('/user-profile', [UserController::class, 'userProfile']);
+    Route::post('/user-profile', [UserController::class, 'updateProfile']);
     Route::post('/change-password ', [UserController::class, 'changePassWord']);
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
 });
+
+// Guest
+Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
