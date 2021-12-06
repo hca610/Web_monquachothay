@@ -65,10 +65,8 @@ class NotificationController extends Controller
     public function updateNotification(Request $request)
     {
         try {
+            UserController::checkrole('admin');
             $notification = Notification::findOrFail($request->id);
-            if (auth()->user()->role != 'admin' &&
-                $notification->receiver_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the chinh sua thong bao nay');
             if (auth()->user()->role == 'admin') {
                 $notification = $this->update($request->all());
             }
