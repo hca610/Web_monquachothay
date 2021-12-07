@@ -11,6 +11,7 @@ class Message extends Model
 
 
     protected $primaryKey = 'message_id';
+    protected $fillable = ['type', 'detail', 'status', 'sender_id', 'receiver_id'];
 
     public function from() {
         return $this->belongsTo(User::class, 'user_id');

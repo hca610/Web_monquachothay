@@ -200,4 +200,20 @@ class UserController extends Controller
             ]);
         }
     }
+
+    function simplecheckrole($role)
+    {
+        if (auth()->user()->role == $role)
+            return true;
+        else
+            return false;
+    }
+
+    function checkrole($role)
+    {
+        if (!self::simplecheckrole($role)) {
+            throw new Exception('Ban khong phai la '.$role);
+        }
+        return $role;
+    }
 }

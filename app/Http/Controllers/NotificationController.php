@@ -6,16 +6,13 @@ use App\Models\Notification;
 use Exception;
 use Illuminate\Http\Request;
 
+use App\Http\Controllers\UserController;
 
 class NotificationController extends Controller
 {
-    public function showAllNotification() {
+    public function showAllNotifications() {
         try {
-            $user = auth()->user();
-            if ($user->role != 'admin') {
-                throw new Exception('Ban khong phai la admin');
-            }
-
+            UserController::checkrole('admin');
             $notifications = Notification::orderByDesc('created_at')->paginate(20);
             return response()->json([
                 'success' => true,
@@ -32,27 +29,29 @@ class NotificationController extends Controller
 
     function create(array $arr)
     {
-        try {
-            $notification = new Notification;
-            $notification->fill($arr);
-            $notification->save();
-            return $notification;
-        } catch (Exception $e) {
-            throw $e;
-        }
+        $notification = new Notification;
+        $notification->fill($arr);
+        $notification->save();
+        return $notification;
+    }
+
+    function update(array $arr)
+    {
+        $notification = UserController::findOrFail($arr['notification_id']);
+        $notification->fill($arr);
+        $notification->save();
+        return $notification;
     }
 
     public function createNotification(Request $request)
     {
         try {
-            $user = auth()->user();
-            if ($user->role != 'admin') {
-                throw new Exception('Ban khong phai la admin');
-            }
+            UserController::checkrole('admin');
+            $notification = $this->create($request->all());
             return response()->json([
                 'success' => true,
                 'message' => 'Tao thong bao thanh cong',
-                'data' => $this->create($request->all()),
+                'data' => $notification,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -63,29 +62,26 @@ class NotificationController extends Controller
         }
     }
 
-    function update(array $arr)
-    {
-        try {
-            $notification = Notification::findOrFail($arr['notification_id']);
-            $notification->fill($arr);
-            $notification->save();
-            return $notification;
-        } catch (Exception $e) {
-            throw $e;
-        }
-    }
-
     public function updateNotification(Request $request)
     {
         try {
-            $user = auth()->user();
-            if ($user->role != 'admin') {
-                throw new Exception('Ban khong phai la admin');
+            $notification = Notification::findOrFail($request->id);
+            if (auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the chinh sua thong bao nay');
+            if (auth()->user()->role == 'admin') {
+                $notification = $this->update($request->all());
+            }
+            else {
+                $notification = $this->update([
+                    'notification_id' => $request->id,
+                    'status' => $request->status
+                ]);
             }
             return response()->json([
                 'success' => true,
                 'message' => 'Cap nhat thong bao thanh cong',
-                'data' => $this->update($request->all()),
+                'data' => $notification,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -99,12 +95,10 @@ class NotificationController extends Controller
     public function showNotification($id)
     {
         try {
-            $user = auth()->user();
-            if ($user->role != 'admin') {
-                throw new Exception('Ban khong phai la admin');
-            }
-
             $notification = Notification::findOrFail($id);
+            if (auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem thong bao nay');
             return response()->json([
                 'success' => true,
                 'notification' => $notification,
@@ -118,16 +112,14 @@ class NotificationController extends Controller
         }
     }
 
-    public function showUserNotification()
+    public function showUserNotifications($user_id)
     {
         try {
-            $user = auth()->user();
-
-            $user_id = $user->user_id;
-            $alluser_id = 1;
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem thong bao cua nguoi dung '.$user_id);
             $notifications = Notification::
             where('receiver_id', $user_id)
-            ->orWhere('receiver_id', $alluser_id)
             ->orderByDesc('created_at')
             ->paginate(20);
             return response()->json([
