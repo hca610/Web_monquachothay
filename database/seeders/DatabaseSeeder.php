@@ -13,19 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        //     \App\Models\User::factory(1)->create([
-        //         'name' => 'ALL USER' ,
-        //         'role' => 'admin',
-        //         'email' => 'admin@email.com',
-        //     ]);
+        \App\Models\User::factory(1)->create([
+            'name' => 'ALL USER',
+            'role' => 'admin',
+            'email' => 'admin@email.com',
+        ]);
 
         \App\Models\User::factory(35)->create(['role' => 'jobseeker']);
         \App\Models\JobSeeker::factory(35)->create();
         \App\Models\User::factory(15)->create(['role' => 'employer']);
         \App\Models\Employer::factory(15)->create();
         \App\Models\Recruitment::factory(30)->create();
-
-        // \App\Models\Message::factory(50)->create();
-        // \App\Models\Notification::factory(50)->create();
+        JobseekerRecruitmentSeeder::run();
+        \App\Models\Message::factory(50)->create();
+        \App\Models\Notification::factory(50)->create();
     }
 }

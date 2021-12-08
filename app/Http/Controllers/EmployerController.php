@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Controllers\NotificationController; /// Muon dung NotificationController thi phai them dong nay
+use App\Http\Controllers\NotificationController;
 
 class EmployerController extends Controller
 {
@@ -140,6 +140,7 @@ class EmployerController extends Controller
                     ->where('type', '<>', '')
                     ->get());
             }
+
             return response()->json([
                 'success' => true,
                 'data' => $listApplication,

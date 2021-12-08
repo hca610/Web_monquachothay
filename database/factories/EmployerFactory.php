@@ -24,7 +24,7 @@ class EmployerFactory extends Factory
     {
         $userList = User::all()->where('role', 'employer');
         return [
-            'user_id' => $this->faker->unique()->numberBetween(36, 50),
+            'user_id' => $this->faker->unique()->numberBetween(37, 51),
             'about_us' => $this->faker->text(200),
             'image_link' => $this->faker->imageUrl(),
             'num_employee' => $this->faker->randomNumber(),
