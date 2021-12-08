@@ -53,15 +53,13 @@ class JobSeekerController extends Controller
     {
         try {
             $jobSeeker = auth()->user()->jobSeeker;
-            if ($jobSeeker->recruitments()->get != NULL)
-                $jobSeeker->recruitments()->syncWithPivotValues([$request->recruitment_id,], ['type' => 'pending'], false);
-            else
+            $jobSeeker->recruitments()->syncWithPivotValues([$request->recruitment_id,], ['type' => 'pending'], false);
 
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đã gửi yêu cầu',
-                ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Đã gửi yêu cầu',
+            ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
