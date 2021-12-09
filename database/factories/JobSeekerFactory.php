@@ -23,7 +23,7 @@ class JobSeekerFactory extends Factory
     public function definition()
     {
         return [
-            'user_id' => $this->faker->unique()->numberBetween(1,35),
+            'user_id' => $this->faker->unique()->numberBetween(2,36),
             'birthday' => $this->faker->date(),
             'gender' => 'male',
             'qualification' => $this->faker->text(20),

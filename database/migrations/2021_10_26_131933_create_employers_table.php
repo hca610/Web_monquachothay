@@ -12,7 +12,6 @@ class CreateEmployersTable extends Migration
             $table->id('employer_id');
             $table->foreignId('user_id');
             $table->string('about_us')->nullable();
-            $table->string('image_link')->nullable();
             $table->integer('num_employee')->nullable();
             $table->string('category')->nullable();
 

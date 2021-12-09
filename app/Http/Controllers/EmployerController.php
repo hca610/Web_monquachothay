@@ -11,14 +11,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use App\Http\Controllers\NotificationController; /// Muon dung NotificationController thi phai them dong nay
+use App\Http\Controllers\NotificationController;
 
 class EmployerController extends Controller
 {
     public function createRecruitment(Request $request)
     {
 
-        return;
         try {
             $user = auth()->user();
             $employer = $user->employer;
@@ -135,10 +134,13 @@ class EmployerController extends Controller
 
             foreach ($recruitments as $recruitment) {
                 $listApplication->push(DB::table('job_seeker_recruitment')
+                    ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
+                    ->join('users', 'users.user_id', 'job_seekers.user_id')
                     ->where('recruitment_id', $recruitment->recruitment_id)
                     ->where('type', '<>', '')
                     ->get());
             }
+
             return response()->json([
                 'success' => true,
                 'data' => $listApplication,

@@ -29,9 +29,8 @@ class UserFactory extends Factory
             'password' => bcrypt('12345678'),
             'phonenumber' => $this->faker->unique()->phoneNumber(),
             'address' => $this->faker->address(),
-            'role' => 'jobseeker',
-            // 'role' => 'employer',
             'status' => 'active',
+            'image_link' => $this->faker->imageUrl(),
         ];
     }
 

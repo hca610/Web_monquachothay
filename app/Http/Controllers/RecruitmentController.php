@@ -10,12 +10,12 @@ use Illuminate\Support\Facades\DB;
 
 class RecruitmentController extends Controller
 {
-    public function showAllRecruitment()
+    public function showAllRecruitment(Request $request)
     {
         if (auth()->user() != NULL)
-            return response()->json($this->showAllRecruitmentAsJobSeeker());
+            return response()->json($this->showAllRecruitmentAsJobSeeker($request));
         else
-            return response()->json($this->showAllRecruitmentAsGuest());
+            return response()->json($this->showAllRecruitmentAsGuest($request));
     }
 
     public function show($recruitmentId)
@@ -36,11 +36,21 @@ class RecruitmentController extends Controller
         }
     }
 
-    protected function showAllRecruitmentAsGuest()
+    protected function showAllRecruitmentAsGuest(Request $request)
     {
+        if ($request->created_at == NULL)
+            $request->created_at = '1000-01-01';
+
         $collection = new Collection();
 
-        $recruitments = Recruitment::all()->sortByDesc('created_at');
+        $recruitments = Recruitment::orderByDesc('created_at')
+            ->where('address', 'like', '%' . $request->address . '%')
+            ->where('category', 'like', '%' . $request->category . '%')
+            ->where('job_name', 'like', '%' . $request->job_name . '%')
+            ->where('min_salary', '>', $request->min_salary)
+            ->where('created_at', '>', $request->created_at)
+            ->get();
+
         foreach ($recruitments as $recruitment) {
             $collection->push([
                 'recruitment' => $recruitment,
@@ -51,13 +61,23 @@ class RecruitmentController extends Controller
         return $collection;
     }
 
-    protected function showAllRecruitmentAsJobSeeker()
+    protected function showAllRecruitmentAsJobSeeker(Request $request)
     {
         try {
+            if ($request->created_at == NULL)
+                $request->created_at = '1000-01-01';
+
             $collection = new Collection();
             $jobSeeker = auth()->user()->jobSeeker;
 
-            $recruitments = Recruitment::all()->sortByDesc('created_at');
+            $recruitments = Recruitment::orderByDesc('created_at')
+                ->where('address', 'like', '%' . $request->address . '%')
+                ->where('category', 'like', '%' . $request->category . '%')
+                ->where('job_name', 'like', '%' . $request->job_name . '%')
+                ->where('min_salary', '>', $request->min_salary)
+                ->where('created_at', '>', $request->created_at)
+                ->get();
+
             foreach ($recruitments as $recruitment) {
                 $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
 
