@@ -17,6 +17,7 @@ class CreateUsersTable extends Migration
             $table->string('address');
             $table->enum('role', ['jobseeker', 'employer', 'admin']);
             $table->enum('status', ['active', 'banned'])->default('active');
+            $table->string('image_link')->nullable();
             $table->timestamps();
         });
 

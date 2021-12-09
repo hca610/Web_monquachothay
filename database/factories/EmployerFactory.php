@@ -26,7 +26,6 @@ class EmployerFactory extends Factory
         return [
             'user_id' => $this->faker->unique()->numberBetween(37, 51),
             'about_us' => $this->faker->text(200),
-            'image_link' => $this->faker->imageUrl(),
             'num_employee' => $this->faker->randomNumber(),
             'category' => $this->faker->text(10),
         ];
