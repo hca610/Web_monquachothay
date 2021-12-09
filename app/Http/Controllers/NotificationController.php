@@ -99,6 +99,7 @@ class NotificationController extends Controller
                 throw new Exception('Nguoi dung khong the xem thong bao nay');
             return response()->json([
                 'success' => true,
+                'message' => 'Tim kiem thong bao thanh con',
                 'notification' => $notification,
             ]);
         } catch (Exception $e) {
@@ -122,13 +123,37 @@ class NotificationController extends Controller
             ->paginate(20);
             return response()->json([
                 'success' => true,
+                'message' => 'Tim kiem thong bao cua nguoi dung '.$user_id.' thanh cong',
                 'data' => $notifications,
-                'user_id' => $user_id
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Da xay ra loi khi tim kiem thong bao cua nguoi dung ' . $user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function countUnseen($user_id)
+    {
+        try {
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem so luong thong bao chua duoc xem cua nguoi dung '.$user_id);
+            $counter = Notification::
+            where('receiver_id', $user_id)
+            ->where('status', 'unseen')
+            ->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dem so luong thong bao chua xem cua nguoi dung '.$user_id.' thanh cong',
+                'data' => $counter,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi dem so luong thong bao chua xem cua nguoi dung ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }

@@ -138,4 +138,30 @@ class ChatController extends MessageController
             ]);
         }
     }
+
+    public function countUnseen($user_id, $other_id)
+    {
+        try {
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem so luong tin nhan chua duoc xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id);
+            $counter = Message::
+            where('receiver_id', $user_id)
+            ->where('sender_id', $other_id)
+            ->where('type', self::$message_type)
+            ->where('status', 'unseen')
+            ->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id.' thanh cong',
+                'data' => $counter,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }
