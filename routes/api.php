@@ -28,6 +28,7 @@ Route::prefix('notification')->middleware('auth:api')->group(function ($router) 
     Route::post('update', 'NotificationController@updateNotification')->name('Update Notification');
     Route::get('notification_id/{notification_id}', 'NotificationController@showNotification')->name('Show Notification');
     Route::get('user/{user_id}', 'NotificationController@showUserNotifications')->name('Show user Notifications');
+    Route::get('user/{user_id}/count/unseen', 'NotificationController@countUnseen')->name('Count unseen Notifications');
 });
 
 # Chat
@@ -37,6 +38,7 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::post('update', 'ChatController@updateMessage')->name('Update Chat Message');
     Route::get('message_id/{message_id}', 'ChatController@showMessage')->name('Show Chat Message');
     Route::get('between/user_id={user_id}&other_id={other_id}', 'ChatController@showChat')->name('Show Chat Between 2 users');
+    Route::get('between/user_id={user_id}&other_id={other_id}/count/unseen', 'ChatController@countUnseen')->name('Count unseen Chat from other user');
 });
 
 # Report
