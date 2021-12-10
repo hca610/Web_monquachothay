@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 
 class AdminController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-    // }
-
     public function isAdmin()
     {
         $user = auth()->user();
@@ -23,9 +19,7 @@ class AdminController extends Controller
     public function getUserList(Request $request)
     {
         if (!$this->isAdmin()) {
-            return response()->json([
-                'message' => 'khong phai admin',
-            ]);
+            throw new Exception('Bạn không phải là admin');
         }
 
         $searchContent = $request->searchContent;
@@ -45,7 +39,7 @@ class AdminController extends Controller
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'message' => $e->getMessage(),
             ]);
         }
     }
@@ -53,9 +47,7 @@ class AdminController extends Controller
     public function changeAccountStatus($id, Request $request)
     {
         if (!$this->isAdmin()) {
-            return response()->json([
-                'message' => 'khong phai admin',
-            ]);
+            throw new Exception('Bạn không phải là admin');
         }
 
         try {
@@ -91,19 +83,33 @@ class AdminController extends Controller
                     ->join('job_seekers', 'users.user_id', 'job_seekers.user_id')
                     ->where('users.user_id', '=', $id)
                     ->get();
-                return $user;
             } else if ($user->role == 'employer') {
                 $user = DB::table('users')
                     ->join('employers', 'users.user_id', 'employers.user_id')
                     ->where('users.user_id', '=', $id)
                     ->get();
-                return $user;
             }
+
+            return response()->json([
+                'success' => true,
+                'data' => $user,
+            ]);
         } catch (Exception $e) {
             return response()->json([
+                'success' => false,
                 'message' => 'Có lỗi xảy ra',
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    protected function createNewToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
+        ]);
     }
 }

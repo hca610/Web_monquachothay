@@ -27,7 +27,7 @@ class UserController extends Controller
         if (!$token = auth()->attempt($validator->validated())) {
             return response()->json([
                 'success' => false,
-                'error' => 'Tên đăng nhập hoặc mật khẩu không đúng'
+                'message' => 'Email hoặc mật khẩu không đúng'
             ], 401);
         }
 
@@ -118,22 +118,7 @@ class UserController extends Controller
     public function changePassWord(Request $request)
     {
         try {
-            // $validator = Validator::make($request->all(), [
-            //     'old_password' => 'required|string|min:6',
-            //     'new_password' => 'required|string|min:6',
-            // ]);
-
-            // if ($validator->fails()) {
-            //     throw new Exception();
-            // }
             $userId = auth()->user()->user_id;
-
-            // if (bcrypt($request->old_password) != auth()->user()->password) {
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Mật khẩu cũ không đúng',
-            //     ]);
-            // }
 
             $user = User::where('user_id', $userId)->update(
                 ['password' => bcrypt($request->new_password)]
