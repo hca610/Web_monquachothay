@@ -7,8 +7,8 @@ use App\Models\User;
 use App\Models\JobSeeker;
 use App\Models\Employer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -24,12 +24,11 @@ class UserController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
         if (!$token = auth()->attempt($validator->validated())) {
-            return response()->json(['error' => 'Tên đăng nhập hoặc mật khẩu không đúng'], 401);
+            return response()->json([
+                'success' => false,
+                'error' => 'Tên đăng nhập hoặc mật khẩu không đúng'
+            ], 401);
         }
 
         return $this->createNewToken($token);
@@ -37,54 +36,44 @@ class UserController extends Controller
 
     public function register(Request $request)
     {
-        if ($request->role == 'jobseeker') {
-            try {
-                $user = new User();
-                $user->fill($request->all());
-                $user->password = bcrypt($request->password);
-                $user->save();
+        try {
 
-                $jobseeker = new JobSeeker();
-                $jobseeker->fill($request->all());
-                $jobseeker->user_id = $user->user_id;
-                $jobseeker->save();
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đăng kí thành công',
-                    'user' => $user,
-                    'jobseeker' => $jobseeker,
-                ], 201);
-            } catch (Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Đã có lỗi xảy ra',
-                ]);
+            if (sizeof(DB::table('users')->where('email', '=', $request->email)->get()) > 0) {
+                throw new Exception('Email đã tồn tại');
+            } else if (sizeof(DB::table('users')->where('phonenumber', '=', $request->phonenumber)->get()) > 0) {
+                throw new Exception('Số điện thoại đã được sử dụng');
             }
-        } else if ($request->role == 'employer') {
-            try {
-                $user = new User();
-                $user->fill($request->all());
-                $user->password = bcrypt($request->password);
-                $user->save();
 
-                $employer = new Employer();
-                $employer->fill($request->all());
-                $employer->user_id = $user->user_id;
-                $employer->save();
+            $user = new User();
+            $user->fill($request->all());
+            $user->password = bcrypt($request->password);
+            $user->save();
 
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Đăng kí thành công',
-                    'user' => $user,
-                    'employer' => $employer,
-                ], 201);
-            } catch (Exception $e) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Đã có lỗi xảy ra',
-                ]);
+            switch ($request->role) {
+                case 'jobseeker':
+                    $jobseeker = new JobSeeker();
+                    $jobseeker->fill($request->all());
+                    $jobseeker->user_id = $user->user_id;
+                    $jobseeker->save();
+                    break;
+                case 'employer':
+                    $employer = new Employer();
+                    $employer->fill($request->all());
+                    $employer->user_id = $user->user_id;
+                    $employer->save();
+                    break;
             }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Đăng kí thành công',
+                'user' => $user,
+            ], 201);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -126,35 +115,26 @@ class UserController extends Controller
         }
     }
 
-    protected function createNewToken($token)
-    {
-        return response()->json([
-            'access_token' => $token,
-            'token_type' => 'bearer',
-            'expires_in' => auth()->factory()->getTTL() * 60,
-            'user' => auth()->user()
-        ]);
-    }
-
     public function changePassWord(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'old_password' => 'required|string|min:6',
-                'new_password' => 'required|string|min:6',
-            ]);
+            // $validator = Validator::make($request->all(), [
+            //     'old_password' => 'required|string|min:6',
+            //     'new_password' => 'required|string|min:6',
+            // ]);
 
-            if ($validator->fails()) {
-                throw new Exception();
-            }
+            // if ($validator->fails()) {
+            //     throw new Exception();
+            // }
             $userId = auth()->user()->user_id;
 
-            if (bcrypt($request->old_password) != auth()->user()->password) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Mật khẩu cũ không đúng',
-                ]);
-            }
+            // if (bcrypt($request->old_password) != auth()->user()->password) {
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Mật khẩu cũ không đúng',
+            //     ]);
+            // }
+
             $user = User::where('user_id', $userId)->update(
                 ['password' => bcrypt($request->new_password)]
             );
@@ -212,8 +192,18 @@ class UserController extends Controller
     function checkrole($role)
     {
         if (!self::simplecheckrole($role)) {
-            throw new Exception('Ban khong phai la '.$role);
+            throw new Exception('Ban khong phai la ' . $role);
         }
         return $role;
+    }
+
+    protected function createNewToken($token)
+    {
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => auth()->user()
+        ]);
     }
 }

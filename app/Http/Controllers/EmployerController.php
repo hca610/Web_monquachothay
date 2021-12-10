@@ -17,7 +17,6 @@ class EmployerController extends Controller
 {
     public function createRecruitment(Request $request)
     {
-
         try {
             $user = auth()->user();
             $employer = $user->employer;
@@ -65,6 +64,13 @@ class EmployerController extends Controller
     {
         try {
             $recruitment = Recruitment::find($id);
+            if (!$this->isOwnRecruitment($recruitment)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không sở hữu việc làm này',
+                ]);
+            }
+
             $recruitment->fill($request->all());
             $recruitment->save();
 
@@ -85,6 +91,13 @@ class EmployerController extends Controller
         try {
             $jobSeeker = JobSeeker::findOrFail($request->job_seeker_id);
             $recruitment = Recruitment::findOrFail($request->recruitment_id);
+
+            if (!$this->isOwnRecruitment($recruitment)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Bạn không sở hữu việc làm này',
+                ]);
+            }
 
             $recruitment->jobSeekers()->syncWithPivotValues(
                 [$jobSeeker->job_seeker_id],
@@ -151,5 +164,10 @@ class EmployerController extends Controller
                 'error' => $e->getMessage(),
             ]);
         }
+    }
+
+    private function isOwnRecruitment($recruitment)
+    {
+        return $recruitment->employer->employer_id == auth()->user()->employer->employer_id;
     }
 }
