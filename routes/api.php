@@ -56,10 +56,9 @@ Route::prefix('report')->middleware('auth:api')->group(function ($router) {
 });
 
 # Admin
-Route::prefix('admin')->middleware('auth:api')->group(function ($router) {
-    Route::get('user', 'AdminController@getUserList');
-    Route::post('/user/{user}', 'AdminController@changeAccountStatus');
-    // Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
+Route::prefix('admin')->group(function ($router) {
+    Route::get('user', 'AdminController@getUserList')->middleware('auth:api');
+    Route::post('/user/{user}', 'AdminController@changeAccountStatus')->middleware('auth:api');
 });
 
 # Employer
