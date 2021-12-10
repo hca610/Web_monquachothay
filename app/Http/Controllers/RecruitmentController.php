@@ -40,6 +40,8 @@ class RecruitmentController extends Controller
     {
         if ($request->created_at == NULL)
             $request->created_at = '1000-01-01';
+        if ($request->min_salary == NULL)
+            $request->min_salary = 0;
 
         $collection = new Collection();
 
@@ -66,6 +68,8 @@ class RecruitmentController extends Controller
         try {
             if ($request->created_at == NULL)
                 $request->created_at = '1000-01-01';
+            if ($request->min_salary == NULL)
+                $request->min_salary = 0;
 
             $collection = new Collection();
             $jobSeeker = auth()->user()->jobSeeker;
