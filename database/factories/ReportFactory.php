@@ -2,21 +2,21 @@
 
 namespace Database\Factories;
 
-use App\Models\Message;
+use App\Models\Report;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
-use CreateMessagesTable;
+use CreateReportsTable;
 
-class MessageFactory extends Factory
+class ReportFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Message::class;
+    protected $model = Report::class;
 
     /**
      * Define the model's default state.
@@ -27,7 +27,7 @@ class MessageFactory extends Factory
     {
         return [
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random(CreateMessagesTable::$status_list),
+            'status'=> Arr::random(CreateReportsTable::$status_list),
             'sender_id' => User::all()->random()->user_id,
             'receiver_id' => User::all()->random()->user_id
         ];

@@ -26,27 +26,16 @@ class MessageController extends Controller
         return $message;
     }
 
-    protected function show($id)
-    {
-        $message = Message::find($id);
-        return $message;
-    }
-
-    //________________________________________________________________________________________________________________________
-
     public function createMessage(Request $request)
     {
         try {
-            $message = new Message;
-            $message->title = $request->input('title');
-            $message->detail = $request->input('detail');
-            $message->status = $request->input('status');
-            $message->sender_id = $request->input('sender_id');
-            $message->receiver_id = $request->input('receiver_id');
-            $message->save();
+            $data = $request->all();
+            $data['sender_id'] = auth()->user()->user_id;
+            $message = self::create($data);
             return response()->json([
                 'success' => true,
                 'message' => 'Tao tin nhan thanh cong',
+                'data' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -60,83 +49,121 @@ class MessageController extends Controller
     public function updateMessage(Request $request)
     {
         try {
-            $message = Message::find($request->input('message_id'));
-            $message->title = $request->input('title');
-            $message->detail = $request->input('detail');
-            $message->status = $request->input('status');
-            $message->sender_id = $request->input('sender_id');
-            $message->receiver_id = $request->input('receiver_id');
-            $message->save();
+            $data = $request->all();
+            $report = Message::findOrFail($data['message_id']);
+            if (auth()->user()->role != 'admin' &&
+                $report->sender_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the chinh sua tin nhan nay');
+            $message = MessageController::update($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Cap nhat thanh cong',
+                'message' => 'Chinh sua tin nhan thanh cong',
+                'data' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cap nhat khong thanh cong',
+                'message' => 'Chinh sua tin nhan khong thanh cong',
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    public function showUsersMessage($sender_id, $receiver_id)
+    public function showChat($user_id, $other_id)
     {
         try {
-            $notifications = Message::orderBy('created_at', 'desc')
-            ->where('sender_id', $sender_id)
-            ->where('receiver_id', $receiver_id)
-            ->where('title', '!=', "report")
-            ->simplePaginate(10);
+            if (auth()->user()->role != 'admin' && 
+                auth()->user()->user_id != $user_id)
+                throw new Exception('Nguoi dung khong the xem cuoc tro chuyen nay');
+            $messages = Message::orderByDesc('created_at')
+            ->where(function ($query) use ($user_id, $other_id) {
+                $query
+                ->where('sender_id', $user_id)
+                ->where('receiver_id', $other_id);
+            })
+            ->orwhere(function ($query) use ($user_id, $other_id) {
+                $query
+                ->where('sender_id', $other_id)
+                ->where('receiver_id', $user_id);
+            })
+            ->paginate(20);
             return response()->json([
                 'success' => true,
-                'data' => $notifications,
+                'message' => 'Tim kiem cuoc tro chuyen thanh cong',
+                'data' => $messages,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi tim kiem tin nhan',
+                'message' => 'Tim kiem cuoc tro chuyen khong thanh cong',
+                'error' => $e->getMessage(),
             ]);
         }
     }
 
-
-    ### Report ###
-    public function reportCount($receiver_id)
+    public function showAllChat()
     {
         try {
-            $report_counter = Message::where('title', "report")
-            ->where('receiver_id', $receiver_id)
+            UserController::checkrole('admin');
+            $messages = Message::orderByDesc('created_at')
+            ->paginate(20);
+            return response()->json([
+                'success' => true,
+                'message' => 'Tim kiem tat ca tin nhan thanh cong',
+                'data' => $messages,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tim kiem tat ca tin nhan khong thanh cong',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function showMessage($message_id)
+    {
+        try {
+            $message = Message::findOrFail($message_id);
+            if (auth()->user()->role != 'admin' &&
+                auth()->user()->user_id != $message->sender_id &&
+                auth()->user()->user_id != $message->receiver_id )
+                throw new Exception('Nguoi dung khong the xem tin nhan '.$message_id);
+            return response()->json([
+                'success' => true,
+                'message' => 'Tim kiem tin nhan '.$message_id.' thanh cong',
+                'data' => $message,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tim kiem tin nhan '.$message_id.' khong thanh cong',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function countUnseen($user_id, $other_id)
+    {
+        try {
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem so luong tin nhan chua duoc xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id);
+            $counter = Message::
+            where('receiver_id', $user_id)
+            ->where('sender_id', $other_id)
+            ->where('status', 'unseen')
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Da dem xong',
-                'data' => $report_counter,
+                'message' => 'Dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id.' thanh cong',
+                'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi dem',
-            ]);
-        }
-    }
-
-    public function showReports($receiver_id)
-    {
-        try {
-            $reports = Message::where('title', "report")
-            ->where('receiver_id', $receiver_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-            return response()->json([
-                'success' => true,
-                'message' => 'Tim kiem phan hoi thanh cong',
-                'data' => $reports,
-            ]);
-        } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tim kiem phan hoi that bai',
+                'message' => 'Da xay ra loi khi dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id,
+                'error' => $e->getMessage(),
             ]);
         }
     }

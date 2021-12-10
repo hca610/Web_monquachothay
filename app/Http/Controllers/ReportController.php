@@ -2,24 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Message;
+use App\Models\Report;
 use Exception;
 use Illuminate\Http\Request;
 
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\UserController;
 
-class ReportController extends MessageController
+class ReportController extends Controller
 {
-    private static $message_type = 'report';
+    protected function create(array $arr)
+    {
+        $report = new Report;
+        $report->fill($arr);
+        $report->save();
+        return $report;
+    }
+
+    protected function update(array $arr)
+    {
+        $report = Report::findOrFail($arr['report_id']);
+        $report->fill($arr);
+        $report->save();
+        return $report;
+    }
 
     public function createReport(Request $request)
     {
         try {
             $data = $request->all();
-            $data['type'] = self::$message_type;
             $data['sender_id'] = auth()->user()->user_id;
-            $report = MessageController::create($data);
+            $report = self::create($data);
             return response()->json([
                 'success' => true,
                 'message' => 'Tao phan hoi thanh cong',
@@ -38,16 +50,11 @@ class ReportController extends MessageController
     {
         try {
             $data = $request->all();
-            if (array_key_exists('report_id', $data))
-                $data['message_id'] = $data['report_id'];
-            $report = Message::findOrFail($data['message_id']);
+            $report = Report::findOrFail($data['report_id']);
             if (auth()->user()->role != 'admin' &&
                 $report->sender_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the chinh sua phan hoi nay');
-            if ($report->type != self::$message_type)
-                throw new Exception('Day khong phai la phan hoi');
-            $data['type'] = self::$message_type;
-            $report = MessageController::update($data);
+            $report = self::update($data);
             return response()->json([
                 'success' => true,
                 'message' => 'Chinh sua phan hoi thanh cong',
@@ -65,9 +72,8 @@ class ReportController extends MessageController
     public function countReportstoUser($receiver_id)
     {
         try {
-            $count = Message::
-            where('type', self::$message_type)
-            ->where('receiver_id', $receiver_id)
+            $count = Report::
+            where('receiver_id', $receiver_id)
             ->where('status', '!=', 'hidden')
             ->count();
             return response()->json([
@@ -90,9 +96,8 @@ class ReportController extends MessageController
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
                 throw new Exception('Nguoi dung khong the dem so luong phan hoi duoc gui boi nguoi dung '.$sender_id);
-            $count = Message::
-            where('type', self::$message_type)
-            ->where('sender_id', $sender_id)
+            $count = Report::
+            where('sender_id', $sender_id)
             ->where('status', '!=', 'hidden')
             ->count();
             return response()->json([
@@ -113,8 +118,7 @@ class ReportController extends MessageController
     {
         try {
             UserController::checkrole('admin');
-            $reports = Message::orderByDesc('created_at')
-            ->where('type', self::$message_type)
+            $reports = Report::orderByDesc('created_at')
             ->where('receiver_id', $receiver_id)
             ->paginate(20);
             return response()->json([
@@ -137,8 +141,7 @@ class ReportController extends MessageController
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
                 throw new Exception('Nguoi dung khong the xem phan hoi duoc gui boi nguoi dung '.$sender_id);
-            $reports = Message::orderByDesc('created_at')
-            ->where('type', self::$message_type)
+            $reports = Report::orderByDesc('created_at')
             ->where('sender_id', $sender_id)
             ->paginate(20);
             return response()->json([
@@ -159,8 +162,7 @@ class ReportController extends MessageController
     {
         try {
             UserController::checkrole('admin');
-            $reports = Message::orderByDesc('created_at')
-            ->where('type', self::$message_type)
+            $reports = Report::orderByDesc('created_at')
             ->paginate(20);
             return response()->json([
                 'success' => true,
@@ -179,12 +181,10 @@ class ReportController extends MessageController
     public function showReport($report_id)
     {
         try {
-            $report = Message::findOrFail($report_id);
+            $report = Report::findOrFail($report_id);
             if (auth()->user()->role != 'admin' &&
                 auth()->user()->user_id != $report->sender_id)
                 throw new Exception('Nguoi dung khong the xem phan hoi '.$report_id);
-            if ($message->type != self::$message_type)
-                throw new Exception('Day khong phai la phan hoi');
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem phai hoi '.$report_id.' tren he thong thanh cong',

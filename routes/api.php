@@ -33,12 +33,12 @@ Route::prefix('notification')->middleware('auth:api')->group(function ($router) 
 
 # Chat
 Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
-    Route::get('', 'ChatController@showAllChat')->name('Show All Chat Messages');
-    Route::post('create', 'ChatController@createMessage')->name('Create Chat Message');
-    Route::post('update', 'ChatController@updateMessage')->name('Update Chat Message');
-    Route::get('message_id/{message_id}', 'ChatController@showMessage')->name('Show Chat Message');
-    Route::get('between/user_id={user_id}&other_id={other_id}', 'ChatController@showChat')->name('Show Chat Between 2 users');
-    Route::get('between/user_id={user_id}&other_id={other_id}/count/unseen', 'ChatController@countUnseen')->name('Count unseen Chat from other user');
+    Route::get('', 'MessageController@showAllChat')->name('Show All Chat Messages');
+    Route::post('create', 'MessageController@createMessage')->name('Create Chat Message');
+    Route::post('update', 'MessageController@updateMessage')->name('Update Chat Message');
+    Route::get('message_id/{message_id}', 'MessageController@showMessage')->name('Show Chat Message');
+    Route::get('between/user_id={user_id}&other_id={other_id}', 'MessageController@showChat')->name('Show Chat Between 2 users');
+    Route::get('between/user_id={user_id}&other_id={other_id}/count/unseen', 'MessageController@countUnseen')->name('Count unseen Chat from other user');
 });
 
 # Report
