@@ -14,7 +14,7 @@ class JobseekerRecruitmentSeeder extends Seeder
      *
      * @return void
      */
-    public function run()
+    public static function run()
     {
         $typeList = ['pending', 'reviewed', 'hired', 'rejected'];
 
