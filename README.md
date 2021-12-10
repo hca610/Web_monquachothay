@@ -31,8 +31,7 @@ Tạo 1 schema trong database với tên ```Web_monquachothay```
 
 Quay lại terminal, nhập lệnh sau để tạo bảng và sinh data:  
 ``` sh
-php artisan migrate 
-php artisan db:seed
+php artisan migrate:fresh --seed 
 ```
 Pull code về trước mỗi lần chạy
 ```
