@@ -166,7 +166,7 @@ class UserController extends Controller
         }
     }
 
-    function simplecheckrole($role)
+    static function simplecheckrole($role)
     {
         if (auth()->user()->role == $role)
             return true;
