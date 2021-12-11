@@ -170,21 +170,21 @@ class MessageController extends Controller
         }
     }
 
-    public function showLastestUsersChatted($user_id)
+    public function showLastestChats($user_id)
     {
         try {
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
-            $other_id_list = Message::orderByDesc('updated_at')
-            ->selectRaw('(sender_id + receiver_id - ?) as other_id, updated_at', [$user_id])
+            $lastestChats = Message::orderByDesc('updated_at')
             ->where('sender_id', $user_id)
             ->orWhere('receiver_id', $user_id)
-            ->get();
+            ->groupByRaw('sender_id+receiver_id')
+            ->paginate(20);
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
-                'data' => json_decode($other_id_list),
+                'data' => $lastestChats,
             ]);
         } catch (Exception $e) {
             return response()->json([

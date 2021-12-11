@@ -40,7 +40,7 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::get('message_id/{message_id}', 'MessageController@showMessage')->name('Show Chat Message');
     Route::get('between/user_id={user_id}&other_id={other_id}', 'MessageController@showChat')->name('Show Chat Between 2 users');
     Route::get('between/user_id={user_id}&other_id={other_id}/status={status}/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
-    Route::get('user/{user_id}/lastest', 'MessageController@showLastestUsersChatted')->name('Show Lastest Users Chatted with');
+    Route::get('user/{user_id}/lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
 });
 
 # Report
