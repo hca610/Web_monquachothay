@@ -28,7 +28,7 @@ class UserController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Email hoặc mật khẩu không đúng'
-            ], 401);
+            ]);
         }
 
         return $this->createNewToken($token);
