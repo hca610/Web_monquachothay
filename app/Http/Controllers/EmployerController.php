@@ -170,4 +170,26 @@ class EmployerController extends Controller
     {
         return $recruitment->employer->employer_id == auth()->user()->employer->employer_id;
     }
+
+    public function showAllEmployer(Request $request)
+    {
+        try {
+            $employers = DB::table('employers')
+                ->join('users', 'users.user_id', '=', 'employers.user_id')
+                ->where('name', 'like', '%' . $request->searchContent . '%')
+                ->where('category', 'like', '%' . $request->searchContent . '%')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'employers' => $employers,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }

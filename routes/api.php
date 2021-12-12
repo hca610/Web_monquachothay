@@ -96,3 +96,4 @@ Route::group([
 
 // Guest
 Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
+Route::get('/employers', 'EmployerController@showAllEmployer');
