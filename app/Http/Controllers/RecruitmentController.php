@@ -51,7 +51,8 @@ class RecruitmentController extends Controller
             ->where('job_name', 'like', '%' . $request->job_name . '%')
             ->where('min_salary', '>', $request->min_salary)
             ->where('created_at', '>', $request->created_at)
-            ->get();
+            ->where('status', '=', 'opening')
+            ->paginate(20);
 
         foreach ($recruitments as $recruitment) {
             $collection->push([

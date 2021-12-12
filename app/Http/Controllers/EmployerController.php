@@ -138,11 +138,16 @@ class EmployerController extends Controller
         }
     }
 
-    public function getApplications()
+    public function getApplications(Request $request)
     {
         try {
             $employer = auth()->user()->employer;
-            $recruitments = $employer->recruitments;
+
+            if ($request->recruitment_id == NULL)
+                $recruitments = $employer->recruitments;
+            else
+                $recruitments = $employer->recruitments()->where('recruitment_id', '=', $request->recruitment_id)->get();
+
             $listApplication = new Collection();
 
             foreach ($recruitments as $recruitment) {
@@ -169,5 +174,27 @@ class EmployerController extends Controller
     private function isOwnRecruitment($recruitment)
     {
         return $recruitment->employer->employer_id == auth()->user()->employer->employer_id;
+    }
+
+    public function showAllEmployer(Request $request)
+    {
+        try {
+            $employers = DB::table('employers')
+                ->join('users', 'users.user_id', '=', 'employers.user_id')
+                ->where('name', 'like', '%' . $request->searchContent . '%')
+                ->where('category', 'like', '%' . $request->searchContent . '%')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'employers' => $employers,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }
