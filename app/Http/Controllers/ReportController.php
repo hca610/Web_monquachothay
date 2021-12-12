@@ -206,6 +206,15 @@ class ReportController extends Controller
             if (auth()->user()->role != 'admin' &&
                 auth()->user()->user_id != $report->sender_id)
                 throw new Exception('Nguoi dung khong the xem phan hoi '.$report_id);
+            $report = Report::where('report_id', $report_id)
+            ->join('users as sender', 'sender.user_id', '=', 'reports.sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'reports.receiver_id')
+            ->select('reports.*', 
+                    'sender.name as sender_name', 
+                    'sender.email as sender_email', 
+                    'receiver.name as receiver_name', 
+                    'receiver.email as receiver_email')
+            ->get()[0];
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem phai hoi '.$report_id.' tren he thong thanh cong',
