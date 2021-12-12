@@ -148,8 +148,9 @@ class EmployerController extends Controller
             foreach ($recruitments as $recruitment) {
                 $listApplication->push(DB::table('job_seeker_recruitment')
                     ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
+                    ->join('recruitments', 'recruitments.recruitment_id', '=', 'job_seeker_recruitment.recruitment_id')
                     ->join('users', 'users.user_id', 'job_seekers.user_id')
-                    ->where('recruitment_id', $recruitment->recruitment_id)
+                    ->where('recruitments.recruitment_id', $recruitment->recruitment_id)
                     ->where('type', '<>', '')
                     ->get());
             }
