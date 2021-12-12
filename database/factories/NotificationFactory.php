@@ -25,7 +25,6 @@ class NotificationFactory extends Factory
      */
     public function definition()
     {
-        $status_list = ['hidden', 'unseen', 'seen'];
         return [
             'title' => $this->faker->text(20),
             'detail' => $this->faker->text(200),

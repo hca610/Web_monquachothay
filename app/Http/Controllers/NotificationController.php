@@ -135,25 +135,53 @@ class NotificationController extends Controller
         }
     }
 
-    public function countUnseen($user_id)
+    public function countUserNotificationsByStatus($user_id, $status)
     {
         try {
+            if ($status != 'unseen' && $status != 'seen')
+                throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem so luong thong bao chua duoc xem cua nguoi dung '.$user_id);
+                throw new Exception('Nguoi dung khong the xem so luong thong bao '.strtoupper($status).' cua nguoi dung '.$user_id);
             $counter = Notification::
             where('receiver_id', $user_id)
-            ->where('status', 'unseen')
+            ->where('status', $status)
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so luong thong bao chua xem cua nguoi dung '.$user_id.' thanh cong',
+                'message' => 'Dem so luong thong bao '.strtoupper($status).' cua nguoi dung '.$user_id.' thanh cong',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi dem so luong thong bao chua xem cua nguoi dung ' . $user_id,
+                'message' => 'Da xay ra loi khi dem so luong thong bao '.strtoupper($status).' cua nguoi dung ' . $user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function showUserNotificationsByStatus($user_id, $status)
+    {
+        try {
+            if ($status != 'unseen' && $status != 'seen')
+                throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id);
+            $counter = Notification::
+            where('receiver_id', $user_id)
+            ->where('status', $status)
+            ->paginate(20);
+            return response()->json([
+                'success' => true,
+                'message' => 'Tim kiem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id.' thanh cong',
+                'data' => $counter,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi tim kiem thong bao '.strtoupper($status).' cua nguoi dung ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }

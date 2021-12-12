@@ -166,7 +166,7 @@ class UserController extends Controller
         }
     }
 
-    function simplecheckrole($role)
+    static function simplecheckrole($role)
     {
         if (auth()->user()->role == $role)
             return true;
@@ -174,7 +174,7 @@ class UserController extends Controller
             return false;
     }
 
-    function checkrole($role)
+    static function checkrole($role)
     {
         if (!self::simplecheckrole($role)) {
             throw new Exception('Ban khong phai la ' . $role);

@@ -143,26 +143,53 @@ class MessageController extends Controller
         }
     }
 
-    public function countUnseen($user_id, $other_id)
+    public function countInChatByStatus($user_id, $other_id, $status)
     {
         try {
+            if ($status != 'unseen' && $status != 'seen')
+                throw new Exception('Trang thai (status) tin nhan '.strtoupper($status).' khong hop le');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem so luong tin nhan chua duoc xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id);
+                throw new Exception('Nguoi dung khong the xem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id);
             $counter = Message::
             where('receiver_id', $user_id)
             ->where('sender_id', $other_id)
-            ->where('status', 'unseen')
+            ->where('status', $status)
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id.' thanh cong',
+                'message' => 'Dem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id.' thanh cong',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi dem so luong tin nhan chua xem cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id,
+                'message' => 'Da xay ra loi khi dem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function showLastestChats($user_id)
+    {
+        try {
+            if (auth()->user()->role != 'admin' && 
+                $user_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
+            $lastestChats = Message::orderByDesc('updated_at')
+            ->where('sender_id', $user_id)
+            ->orWhere('receiver_id', $user_id)
+            ->groupByRaw('sender_id+receiver_id')
+            ->paginate(20);
+            return response()->json([
+                'success' => true,
+                'message' => 'Tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
+                'data' => $lastestChats,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
                 'error' => $e->getMessage(),
             ]);
         }
