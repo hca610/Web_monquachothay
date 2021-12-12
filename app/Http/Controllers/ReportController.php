@@ -120,6 +120,13 @@ class ReportController extends Controller
             UserController::checkrole('admin');
             $reports = Report::orderByDesc('created_at')
             ->where('receiver_id', $receiver_id)
+            ->join('users as sender', 'sender.user_id', '=', 'sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
+            ->select('reports.*', 
+                    'sender.name as sender_name', 
+                    'sender.email as sender_email', 
+                    'receiver.name as receiver_name', 
+                    'receiver.email as receiver_email')
             ->paginate(20);
             return response()->json([
                 'success' => true,
@@ -143,6 +150,13 @@ class ReportController extends Controller
                 throw new Exception('Nguoi dung khong the xem phan hoi duoc gui boi nguoi dung '.$sender_id);
             $reports = Report::orderByDesc('created_at')
             ->where('sender_id', $sender_id)
+            ->join('users as sender', 'sender.user_id', '=', 'sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
+            ->select('reports.*', 
+                    'sender.name as sender_name', 
+                    'sender.email as sender_email', 
+                    'receiver.name as receiver_name', 
+                    'receiver.email as receiver_email')
             ->paginate(20);
             return response()->json([
                 'success' => true,
@@ -163,6 +177,13 @@ class ReportController extends Controller
         try {
             UserController::checkrole('admin');
             $reports = Report::orderByDesc('created_at')
+            ->join('users as sender', 'sender.user_id', '=', 'sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
+            ->select('reports.*', 
+                    'sender.name as sender_name', 
+                    'sender.email as sender_email', 
+                    'receiver.name as receiver_name', 
+                    'receiver.email as receiver_email')
             ->paginate(20);
             return response()->json([
                 'success' => true,
