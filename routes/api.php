@@ -44,15 +44,20 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
 });
 
 # Report
-Route::prefix('report')->middleware('auth:api')->group(function ($router) {
-    Route::get('', 'ReportController@showAllReports')->name('Show All Reports');
-    Route::post('create', 'ReportController@createReport')->name('Create Report');
-    Route::post('update', 'ReportController@updateReport')->name('Update Report');
-    Route::get('report_id/{report_id}', 'ReportController@showReport')->name('Show Report');
+Route::prefix('report')->group(function ($router) {
+    # Do not need to login
     Route::get('to/{user_id}/count', 'ReportController@countReportstoUser')->name('Count Reports to User');
     Route::get('to/{user_id}', 'ReportController@showReportstoUser')->name('Show Reports to User');
-    Route::get('from/{user_id}/count', 'ReportController@countReportsfromUser')->name('Count Reports from User');
-    Route::get('from/{user_id}', 'ReportController@showReportsfromUser')->name('Show Reports from User');
+
+    # Need to login
+    Route::middleware('auth:api')->group(function ($router) {
+        Route::get('', 'ReportController@showAllReports')->name('Show All Reports');
+        Route::post('create', 'ReportController@createReport')->name('Create Report');
+        Route::post('update', 'ReportController@updateReport')->name('Update Report');
+        Route::get('report_id/{report_id}', 'ReportController@showReport')->name('Show Report');
+        Route::get('from/{user_id}/count', 'ReportController@countReportsfromUser')->name('Count Reports from User');
+        Route::get('from/{user_id}', 'ReportController@showReportsfromUser')->name('Show Reports from User');
+    });
 });
 
 # Admin
