@@ -183,7 +183,7 @@ class EmployerController extends Controller
                 ->join('users', 'users.user_id', '=', 'employers.user_id')
                 ->where('name', 'like', '%' . $request->searchContent . '%')
                 ->where('category', 'like', '%' . $request->searchContent . '%')
-                ->get();
+                ->paginate(15);
 
             return response()->json([
                 'success' => true,
