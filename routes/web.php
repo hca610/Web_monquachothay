@@ -15,3 +15,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/test/listen', function() {
+    return view('testlisten');
+});

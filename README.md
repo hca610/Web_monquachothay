@@ -18,11 +18,13 @@ DB_DATABASE=Web_monquachothay
 DB_USERNAME=root
 DB_PASSWORD=[Nhập pass của database nếu có]  
 ```
+
 Mở terminal, trỏ vào folder project rồi nhập:
 ``` sh
 git checkout dev
 composer install
 ``` 
+
 Sinh khóa 
 ```
 php artisan jwt:secret
@@ -40,4 +42,42 @@ git pull
 Bật server:
 ``` sh
 php artisan serve
+```
+
+# De su dung Websocket
+## Doi voi Back-end
+Sua doi them noi dung trong file .env.example:
+```
+BROADCAST_DRIVER=pusher
+
+PUSHER_APP_ID=1315519
+PUSHER_APP_KEY=a13024e4824fe0c8b79c
+PUSHER_APP_SECRET=549b46ce78e711c563cf
+PUSHER_APP_CLUSTER=ap1
+```
+Cai dat them pusher:
+```
+composer require pusher/pusher-php-server
+```
+## Doi voi Front-end
+Cai dat
+```
+npm install pusher-js @react-native-community/netinfo
+```
+Code mau:
+```js
+import Pusher from 'pusher-js/react-native';
+
+// Enable pusher logging - don't include this in production
+Pusher.logToConsole = true;
+
+var pusher = new Pusher('a13024e4824fe0c8b79c', {
+  cluster: 'ap1',
+//   forceTLS: true
+});
+
+var channel = pusher.subscribe('my-channel');
+channel.bind('my-event', function(data) {
+  alert(JSON.stringify(data));
+});
 ```
