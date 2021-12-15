@@ -26,7 +26,7 @@ class Message extends Model
 
     public function broadcastOn($event)
     {
-        return new PrivateChannel('MessageChannel.User.'.$this->receiver_id); // Private Channel
-        // return new Channel('MessageChannel.User.'.$this->receiver_id); // Public Channel
+        return new PrivateChannel('MessageChannel.User.'.$this->receiver_id);
+        // return [new PrivateChannel('MessageChannel.User.'.$this->receiver_id), new Channel('MessageChannel.User.'.$this->receiver_id)];
     }
 }

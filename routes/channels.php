@@ -19,7 +19,10 @@ Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
 
-Broadcast::channel('MessageChannel.User.{receiver_id}', function ($user, $receiver_id) {
-    return true;
-    return (int) $user->id === (int) $receiver_id;
+Broadcast::channel('MessageChannel.User.{userId}', function ($user, $userId) {
+    return (int) $user->user_id === (int) $userId;
+});
+
+Broadcast::channel('NotificationChannel.User.{userId}', function ($user, $userId) {
+    return (int) $user->user_id === (int) $userId;
 });

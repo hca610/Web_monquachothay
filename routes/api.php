@@ -37,10 +37,10 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::get('', 'MessageController@showAllChat')->name('Show All Chat Messages');
     Route::post('create', 'MessageController@createMessage')->name('Create Chat Message');
     Route::post('update', 'MessageController@updateMessage')->name('Update Chat Message');
-    Route::get('message_id/{message_id}', 'MessageController@showMessage')->name('Show Chat Message');
-    Route::get('between/user_id={user_id}&other_id={other_id}', 'MessageController@showChat')->name('Show Chat Between 2 users');
-    Route::get('between/user_id={user_id}&other_id={other_id}/status={status}/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
-    Route::get('user/{user_id}/lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
+    Route::get('message', 'MessageController@showMessage')->name('Show Chat Message');
+    Route::get('between', 'MessageController@showChat')->name('Show Chat Between 2 users');
+    Route::get('between/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
+    Route::get('lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
 });
 
 # Report
