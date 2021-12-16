@@ -88,7 +88,7 @@ class MessageController extends Controller
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $user_id)
                 throw new Exception('Nguoi dung khong the xem cuoc tro chuyen nay');
-            $messages = Message::orderByDesc('created_at')
+            $messages = Message::orderByRaw('created_at DESC, message_id DESC')
             ->where(function ($query) use ($user_id, $other_id) {
                 $query
                 ->where(function ($query) use ($user_id, $other_id) {
@@ -136,7 +136,7 @@ class MessageController extends Controller
             else
                 $get = 1;
             UserController::checkrole('admin');
-            $messages = Message::orderByDesc('created_at')
+            $messages = Message::orderByRaw('created_at DESC, message_id DESC')
             ->where(function ($query) use ($before) {
                 if (is_numeric($before) == 1)
                     $query->where('message_id', '<', $before);
@@ -233,7 +233,7 @@ class MessageController extends Controller
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
-            $lastestChats = Message::orderByRAW('MAX(updated_at) DESC')
+            $lastestChats = Message::orderByRAW('MAX(updated_at) DESC, message_id DESC')
             ->selectRaw('sender_id + receiver_id - ? as other_id, MAX(updated_at) as updated_at', [$user_id])
             ->where(function ($query) use ($user_id) {
                 $query

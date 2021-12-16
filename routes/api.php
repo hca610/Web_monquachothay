@@ -26,10 +26,10 @@ Route::prefix('notification')->middleware('auth:api')->group(function ($router) 
     Route::get('', 'NotificationController@showAllNotifications')->name('Show All Notifications');
     Route::post('create', 'NotificationController@createNotification')->name('Create Notification');
     Route::post('update', 'NotificationController@updateNotification')->name('Update Notification');
-    Route::get('notification_id/{notification_id}', 'NotificationController@showNotification')->name('Show Notification');
-    Route::get('user/{user_id}', 'NotificationController@showUserNotifications')->name('Show user Notifications');
-    Route::get('user/{user_id}/status={status}', 'NotificationController@showUserNotificationsByStatus')->name('Show User Notifications by Status');
-    Route::get('user/{user_id}/status={status}/count', 'NotificationController@countUserNotificationsByStatus')->name('Count User Notifications by Status');
+    Route::get('notification', 'NotificationController@showNotification')->name('Show Notification');
+    Route::get('user', 'NotificationController@showUserNotifications')->name('Show user Notifications');
+    Route::get('user/status', 'NotificationController@showUserNotificationsByStatus')->name('Show User Notifications by Status');
+    Route::get('user/status/count', 'NotificationController@countUserNotificationsByStatus')->name('Count User Notifications by Status');
 });
 
 # Chat
