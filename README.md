@@ -60,7 +60,33 @@ Cai dat them pusher:
 composer require pusher/pusher-php-server
 ```
 ## Doi voi Front-end
+
+Hien tai back-end sever co broadcast tren 2 channel la private-MessageChannel.User.{user_id} va private-NotificationChannel.User.{user_id}
+
+### private-MessageChannel.User.{user_id} Danh cho chat
+Co cac event sau:
+- MessageCreated: Khi co mot tin nhan moi duoc tao ra voi receiver_id = user_id, tuc tin nhan gui toi nguoi dung user_id
+- MessageUpdated: Khi co cap nhat cho tin nhan (bat buoc cap nhat phai co thay doi thanh phan ben trong tin nhan, neu khong co thay doi gi khi goi api update thi se khong co event) voi tin nhan co receiver_id = user_id, tuc tin nhan gui toi nguoi dung user_id
+
+### private-NotificationChannel.User.{user_id} Danh cho notification
+Co cac event sau:
+- NotificationCreated
+- NotificationUpdated
+
+Cac event tuong tu nhu o phan Message
+
+### Vi du
+
 Truy cap link {ten mien}/test/listen de chay code mau
+
+Trong code mau co 4 channel
+- MessageChannel.User.1
+- private-MessageChannel.User.1
+- MessageChannel.User.2
+- private-MessageChannel.User.2
+
+Neu cai dat dung thi se listen duoc event tu private-MessageChannel.User.1 (kenh private cua user co user_id bang 1 trong he thong).
+
 Code mau:
 ```html
 <!DOCTYPE html>
@@ -75,7 +101,8 @@ Code mau:
     var pusher = new Pusher('a13024e4824fe0c8b79c', {
       cluster: 'ap1',
       forceTLS: true,
-      authEndpoint: "{ten mien}/broadcasting/auth",
+      authEndpoint: "{ten mien cua backend sever}/broadcasting/auth",
+      // neu khong dien gi vao phan ten mien backend sever thi se mac dinh la ip cua localhost, code se hoan toan chay tren may local
       auth: {
           headers: {
             Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYzOTIyOTgxNywiZXhwIjoxNjM5ODM0NjE3LCJuYmYiOjE2MzkyMjk4MTcsImp0aSI6IlZGcDRUUlJFaGhOWGFjdTAiLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.qRA0AwUGmW1xMEn-_JtXxmnbZ8Ox6fqeJfiRc17YO14'
