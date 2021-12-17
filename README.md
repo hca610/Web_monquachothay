@@ -101,7 +101,7 @@ Code mau:
     var pusher = new Pusher('a13024e4824fe0c8b79c', {
       cluster: 'ap1',
       forceTLS: true,
-      authEndpoint: "{ten mien cua backend sever}/broadcasting/auth",
+      authEndpoint: "/broadcasting/auth",
       // neu khong dien gi vao phan ten mien backend sever thi se mac dinh la ip cua localhost, code se hoan toan chay tren may local
       auth: {
           headers: {

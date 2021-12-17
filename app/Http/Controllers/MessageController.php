@@ -49,11 +49,19 @@ class MessageController extends Controller
     public function updateMessage(Request $request)
     {
         try {
-            $data = $request->all();
-            $report = Message::findOrFail($data['message_id']);
+            $message = Message::findOrFail($request->message_id);
             if (auth()->user()->role != 'admin' &&
-                $report->sender_id != auth()->user()->user_id)
+                $message->sender_id != auth()->user()->user_id &&
+                $message->receiver_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the chinh sua tin nhan nay');
+            $data = $request->all();
+            if ($message->sender_id == auth()->user()->user_id) {
+                unset($data['receiver_id']);
+            }
+            if ($message->receiver_id == auth()->user()->user_id) {
+                unset($data['receiver_id']);
+                $data = ['status' => 'seen'];
+            }
             $message = MessageController::update($data);
             return response()->json([
                 'success' => true,
@@ -233,15 +241,20 @@ class MessageController extends Controller
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
-            $lastestChats = Message::orderByRAW('MAX(updated_at) DESC, message_id DESC')
-            ->selectRaw('sender_id + receiver_id - ? as other_id, MAX(updated_at) as updated_at', [$user_id])
+            $lastestChats = Message::orderByRAW('MAX(messages.updated_at) DESC, message_id DESC')
+            ->selectRaw('sender_id + receiver_id - ? as other_id,
+                if(sender.user_id!=?,sender.name,receiver.name) as name,
+                if(sender.user_id!=?,sender.email,receiver.email) as email,
+                MAX(messages.updated_at) as updated_at', [$user_id, $user_id, $user_id])
             ->where(function ($query) use ($user_id) {
                 $query
                 ->where('sender_id', $user_id)
                 ->orWhere('receiver_id', $user_id);
             })
+            ->join('users as sender', 'sender.user_id', '=', 'sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
             ->groupByRaw('sender_id+receiver_id')
-            ->havingRaw('MAX(updated_at) < ?', [$before])
+            ->havingRaw('MAX(messages.updated_at) < ?', [$before])
             ->limit($get)
             ->get();
             return response()->json([
