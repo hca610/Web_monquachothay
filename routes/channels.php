@@ -24,5 +24,6 @@ Broadcast::channel('MessageChannel.User.{userId}', function ($user, $userId) {
 });
 
 Broadcast::channel('NotificationChannel.User.{userId}', function ($user, $userId) {
+    return true;
     return (int) $user->user_id === (int) $userId;
 });

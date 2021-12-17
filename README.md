@@ -87,7 +87,18 @@ Trong code mau co 4 channel
 
 Neu cai dat dung thi se listen duoc event tu private-MessageChannel.User.1 (kenh private cua user co user_id bang 1 trong he thong).
 
-Code mau:
+#### React native
+Doi voi react-native thi can cai dat them lenh phia duoi
+```sh
+npm install pusher-js @react-native-community/netinfo
+```
+va trong code nho import them thu vien:
+```js
+import Pusher from 'pusher-js/react-native';
+```
+code y het nhu phan script cua code mau
+
+#### Code mau:
 ```html
 <!DOCTYPE html>
 <head>
@@ -101,7 +112,7 @@ Code mau:
     var pusher = new Pusher('a13024e4824fe0c8b79c', {
       cluster: 'ap1',
       forceTLS: true,
-      authEndpoint: "/broadcasting/auth",
+      authEndpoint: "{ten mien cua backend sever}/broadcasting/auth",
       // neu khong dien gi vao phan ten mien backend sever thi se mac dinh la ip cua localhost, code se hoan toan chay tren may local
       auth: {
           headers: {
