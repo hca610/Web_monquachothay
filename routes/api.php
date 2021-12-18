@@ -92,6 +92,7 @@ Route::group([
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
     Route::post('/change-password ', [UserController::class, 'changePassWord']);
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
+    Route::get('/users', [UserController::class, 'searchUser']);
 });
 
 // Guest

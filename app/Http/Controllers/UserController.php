@@ -191,4 +191,23 @@ class UserController extends Controller
             'user' => auth()->user()
         ]);
     }
+
+    public function searchUser(Request $request)
+    {
+        try {
+            $users = User::where('name', 'like', '%' . $request->name . '%')
+                ->where('email', 'like', '%' . $request->email . '%')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'users' => $users,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+            ]);
+        }
+    }
 }
