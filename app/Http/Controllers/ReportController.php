@@ -117,7 +117,6 @@ class ReportController extends Controller
     public function showReportstoUser($receiver_id)
     {
         try {
-            UserController::checkrole('admin');
             $reports = Report::orderByDesc('created_at')
             ->where('receiver_id', $receiver_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')

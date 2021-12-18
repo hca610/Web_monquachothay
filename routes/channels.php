@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Broadcast;
 
+use App\Broadcasting\MessageChannel;
+
 /*
 |--------------------------------------------------------------------------
 | Broadcast Channels
@@ -15,4 +17,12 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('MessageChannel.User.{userId}', function ($user, $userId) {
+    return (int) $user->user_id === (int) $userId;
+});
+
+Broadcast::channel('NotificationChannel.User.{userId}', function ($user, $userId) {
+    return (int) $user->user_id === (int) $userId;
 });

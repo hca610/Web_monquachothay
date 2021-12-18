@@ -10,10 +10,26 @@ use App\Http\Controllers\UserController;
 
 class NotificationController extends Controller
 {
-    public function showAllNotifications() {
+    public function showAllNotifications(Request $request) {
         try {
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
             UserController::checkrole('admin');
-            $notifications = Notification::orderByDesc('created_at')->paginate(20);
+            $notifications = Notification::orderByRaw('created_at DESC, notification_id DESC')
+            ->where(function ($query) use ($before) {
+                if (is_numeric($before) == 1)
+                    $query->where('notification_id', '<', $before);
+                else
+                    $query->where('created_at', '<', $before);
+            })
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'data' => $notifications
@@ -37,7 +53,7 @@ class NotificationController extends Controller
 
     function update(array $arr)
     {
-        $notification = UserController::findOrFail($arr['notification_id']);
+        $notification = Notification::findOrFail($arr['notification_id']);
         $notification->fill($arr);
         $notification->save();
         return $notification;
@@ -65,14 +81,16 @@ class NotificationController extends Controller
     public function updateNotification(Request $request)
     {
         try {
-            UserController::checkrole('admin');
-            $notification = Notification::findOrFail($request->id);
+            $notification = Notification::findOrFail($request->notification_id);
+            if (auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the chinh sua thong bao nay');
             if (auth()->user()->role == 'admin') {
                 $notification = $this->update($request->all());
             }
             else {
                 $notification = $this->update([
-                    'notification_id' => $request->id,
+                    'notification_id' => $request->notification_id,
                     'status' => $request->status
                 ]);
             }
@@ -90,10 +108,11 @@ class NotificationController extends Controller
         }
     }
 
-    public function showNotification($id)
+    public function showNotification(Request $request)
     {
         try {
-            $notification = Notification::findOrFail($id);
+            $notification_id = $request->notification_id;
+            $notification = Notification::findOrFail($notification_id);
             if (auth()->user()->role != 'admin' &&
                 $notification->receiver_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem thong bao nay');
@@ -111,16 +130,34 @@ class NotificationController extends Controller
         }
     }
 
-    public function showUserNotifications($user_id)
+    public function showUserNotifications(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem thong bao cua nguoi dung '.$user_id);
-            $notifications = Notification::
-            where('receiver_id', $user_id)
-            ->orderByDesc('created_at')
-            ->paginate(20);
+            $notifications = Notification::orderByRaw('created_at DESC, notification_id DESC')
+            ->where('receiver_id', $user_id)
+            ->where(function ($query) use ($before) {
+                if (is_numeric($before) == 1)
+                    $query->where('notification_id', '<', $before);
+                else
+                    $query->where('created_at', '<', $before);
+            })
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem thong bao cua nguoi dung '.$user_id.' thanh cong',
@@ -135,9 +172,14 @@ class NotificationController extends Controller
         }
     }
 
-    public function countUserNotificationsByStatus($user_id, $status)
+    public function countUserNotificationsByStatus(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
                 throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
             if (auth()->user()->role != 'admin' && 
@@ -161,18 +203,38 @@ class NotificationController extends Controller
         }
     }
 
-    public function showUserNotificationsByStatus($user_id, $status)
+    public function showUserNotificationsByStatus(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
+            $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
                 throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id);
-            $counter = Notification::
-            where('receiver_id', $user_id)
+            $counter = Notification::orderByRaw('created_at DESC, notification_id DESC')
+            ->where('receiver_id', $user_id)
             ->where('status', $status)
-            ->paginate(20);
+            ->where(function ($query) use ($before) {
+                if (is_numeric($before) == 1)
+                    $query->where('notification_id', '<', $before);
+                else
+                    $query->where('created_at', '<', $before);
+            })
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id.' thanh cong',

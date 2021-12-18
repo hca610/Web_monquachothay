@@ -26,10 +26,10 @@ Route::prefix('notification')->middleware('auth:api')->group(function ($router) 
     Route::get('', 'NotificationController@showAllNotifications')->name('Show All Notifications');
     Route::post('create', 'NotificationController@createNotification')->name('Create Notification');
     Route::post('update', 'NotificationController@updateNotification')->name('Update Notification');
-    Route::get('notification_id/{notification_id}', 'NotificationController@showNotification')->name('Show Notification');
-    Route::get('user/{user_id}', 'NotificationController@showUserNotifications')->name('Show user Notifications');
-    Route::get('user/{user_id}/status={status}', 'NotificationController@showUserNotificationsByStatus')->name('Show User Notifications by Status');
-    Route::get('user/{user_id}/status={status}/count', 'NotificationController@countUserNotificationsByStatus')->name('Count User Notifications by Status');
+    Route::get('notification', 'NotificationController@showNotification')->name('Show Notification');
+    Route::get('user', 'NotificationController@showUserNotifications')->name('Show user Notifications');
+    Route::get('user/status', 'NotificationController@showUserNotificationsByStatus')->name('Show User Notifications by Status');
+    Route::get('user/status/count', 'NotificationController@countUserNotificationsByStatus')->name('Count User Notifications by Status');
 });
 
 # Chat
@@ -37,22 +37,28 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::get('', 'MessageController@showAllChat')->name('Show All Chat Messages');
     Route::post('create', 'MessageController@createMessage')->name('Create Chat Message');
     Route::post('update', 'MessageController@updateMessage')->name('Update Chat Message');
-    Route::get('message_id/{message_id}', 'MessageController@showMessage')->name('Show Chat Message');
-    Route::get('between/user_id={user_id}&other_id={other_id}', 'MessageController@showChat')->name('Show Chat Between 2 users');
-    Route::get('between/user_id={user_id}&other_id={other_id}/status={status}/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
-    Route::get('user/{user_id}/lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
+    Route::get('message', 'MessageController@showMessage')->name('Show Chat Message');
+    Route::get('between', 'MessageController@showChat')->name('Show Chat Between 2 users');
+    Route::get('between/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
+    Route::get('lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
+    Route::get('count/unseen', 'MessageController@countUserUnseenChatWith')->name('Count Users being UNSEEN');
 });
 
 # Report
-Route::prefix('report')->middleware('auth:api')->group(function ($router) {
-    Route::get('', 'ReportController@showAllReports')->name('Show All Reports');
-    Route::post('create', 'ReportController@createReport')->name('Create Report');
-    Route::post('update', 'ReportController@updateReport')->name('Update Report');
-    Route::get('report_id/{report_id}', 'ReportController@showReport')->name('Show Report');
+Route::prefix('report')->group(function ($router) {
+    # Do not need to login
     Route::get('to/{user_id}/count', 'ReportController@countReportstoUser')->name('Count Reports to User');
     Route::get('to/{user_id}', 'ReportController@showReportstoUser')->name('Show Reports to User');
-    Route::get('from/{user_id}/count', 'ReportController@countReportsfromUser')->name('Count Reports from User');
-    Route::get('from/{user_id}', 'ReportController@showReportsfromUser')->name('Show Reports from User');
+
+    # Need to login
+    Route::middleware('auth:api')->group(function ($router) {
+        Route::get('', 'ReportController@showAllReports')->name('Show All Reports');
+        Route::post('create', 'ReportController@createReport')->name('Create Report');
+        Route::post('update', 'ReportController@updateReport')->name('Update Report');
+        Route::get('report_id/{report_id}', 'ReportController@showReport')->name('Show Report');
+        Route::get('from/{user_id}/count', 'ReportController@countReportsfromUser')->name('Count Reports from User');
+        Route::get('from/{user_id}', 'ReportController@showReportsfromUser')->name('Show Reports from User');
+    });
 });
 
 # Admin

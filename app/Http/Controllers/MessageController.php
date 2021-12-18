@@ -49,12 +49,20 @@ class MessageController extends Controller
     public function updateMessage(Request $request)
     {
         try {
-            $data = $request->all();
-            $report = Message::findOrFail($data['message_id']);
+            $message = Message::findOrFail($request->message_id);
             if (auth()->user()->role != 'admin' &&
-                $report->sender_id != auth()->user()->user_id)
+                $message->sender_id != auth()->user()->user_id &&
+                $message->receiver_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the chinh sua tin nhan nay');
-            $message = MessageController::update($data);
+            if (auth()->user()->role == 'admin') {
+                $message = $this->update($request->all());
+            }
+            else {
+                $message = $this->update([
+                    'notification_id' => $request->id,
+                    'status' => $request->status
+                ]);
+            }
             return response()->json([
                 'success' => true,
                 'message' => 'Chinh sua tin nhan thanh cong',
@@ -69,24 +77,47 @@ class MessageController extends Controller
         }
     }
 
-    public function showChat($user_id, $other_id)
+    public function showChat(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            $other_id = $request->other_id;
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $user_id)
                 throw new Exception('Nguoi dung khong the xem cuoc tro chuyen nay');
-            $messages = Message::orderByDesc('created_at')
+            $messages = Message::orderByRaw('created_at DESC, message_id DESC')
             ->where(function ($query) use ($user_id, $other_id) {
                 $query
-                ->where('sender_id', $user_id)
-                ->where('receiver_id', $other_id);
+                ->where(function ($query) use ($user_id, $other_id) {
+                    $query
+                    ->where('sender_id', $user_id)
+                    ->where('receiver_id', $other_id);
+                })
+                ->orwhere(function ($query) use ($user_id, $other_id) {
+                    $query
+                    ->where('sender_id', $other_id)
+                    ->where('receiver_id', $user_id);
+                });
             })
-            ->orwhere(function ($query) use ($user_id, $other_id) {
-                $query
-                ->where('sender_id', $other_id)
-                ->where('receiver_id', $user_id);
+            ->where(function ($query) use ($before) {
+                if (is_numeric($before) == 1)
+                    $query->where('message_id', '<', $before);
+                else
+                    $query->where('created_at', '<', $before);
             })
-            ->paginate(20);
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem cuoc tro chuyen thanh cong',
@@ -101,12 +132,27 @@ class MessageController extends Controller
         }
     }
 
-    public function showAllChat()
+    public function showAllChat(Request $request)
     {
         try {
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
             UserController::checkrole('admin');
-            $messages = Message::orderByDesc('created_at')
-            ->paginate(20);
+            $messages = Message::orderByRaw('created_at DESC, message_id DESC')
+            ->where(function ($query) use ($before) {
+                if (is_numeric($before) == 1)
+                    $query->where('message_id', '<', $before);
+                else
+                    $query->where('created_at', '<', $before);
+            })
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem tat ca tin nhan thanh cong',
@@ -121,9 +167,10 @@ class MessageController extends Controller
         }
     }
 
-    public function showMessage($message_id)
+    public function showMessage(Request $request)
     {
         try {
+            $message_id = $request->message_id;
             $message = Message::findOrFail($message_id);
             if (auth()->user()->role != 'admin' &&
                 auth()->user()->user_id != $message->sender_id &&
@@ -143,9 +190,15 @@ class MessageController extends Controller
         }
     }
 
-    public function countInChatByStatus($user_id, $other_id, $status)
+    public function countInChatByStatus(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            $other_id = $request->other_id;
+            $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
                 throw new Exception('Trang thai (status) tin nhan '.strtoupper($status).' khong hop le');
             if (auth()->user()->role != 'admin' && 
@@ -170,17 +223,40 @@ class MessageController extends Controller
         }
     }
 
-    public function showLastestChats($user_id)
+    public function showLastestChats(Request $request)
     {
         try {
+            if ($request->has('user_id'))
+                $user_id = $request->user_id;
+            else
+                $user_id = auth()->user()->user_id;
+            if ($request->has('before'))
+                $before = $request->before;
+            else
+                $before = now();
+            if ($request->has('get'))
+                $get = $request->get;
+            else
+                $get = 1;
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
-            $lastestChats = Message::orderByDesc('updated_at')
-            ->where('sender_id', $user_id)
-            ->orWhere('receiver_id', $user_id)
+            $lastestChats = Message::orderByRAW('MAX(messages.updated_at) DESC, message_id DESC')
+            ->selectRaw('sender_id + receiver_id - ? as other_id,
+                if(sender.user_id!=?,sender.name,receiver.name) as name,
+                if(sender.user_id!=?,sender.email,receiver.email) as email,
+                MAX(messages.updated_at) as updated_at', [$user_id, $user_id, $user_id])
+            ->where(function ($query) use ($user_id) {
+                $query
+                ->where('sender_id', $user_id)
+                ->orWhere('receiver_id', $user_id);
+            })
+            ->join('users as sender', 'sender.user_id', '=', 'sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
             ->groupByRaw('sender_id+receiver_id')
-            ->paginate(20);
+            ->havingRaw('MAX(messages.updated_at) < ?', [$before])
+            ->limit($get)
+            ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
@@ -190,6 +266,28 @@ class MessageController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Da xay ra loi khi tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function countUserUnseenChatWith()
+    {
+        try {
+            $user_id = auth()->user()->user_id;
+            $count = Message::where('receiver_id', $user_id)
+            ->where('status', 'unseen')
+            ->groupBy('sender_id')
+            ->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
+                'data' => $count,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
                 'error' => $e->getMessage(),
             ]);
         }
