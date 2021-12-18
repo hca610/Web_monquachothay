@@ -54,15 +54,15 @@ class MessageController extends Controller
                 $message->sender_id != auth()->user()->user_id &&
                 $message->receiver_id != auth()->user()->user_id)
                 throw new Exception('Nguoi dung khong the chinh sua tin nhan nay');
-            $data = $request->all();
-            if ($message->sender_id == auth()->user()->user_id) {
-                unset($data['receiver_id']);
+            if (auth()->user()->role == 'admin') {
+                $message = $this->update($request->all());
             }
-            if ($message->receiver_id == auth()->user()->user_id) {
-                unset($data['receiver_id']);
-                $data = ['status' => 'seen'];
+            else {
+                $message = $this->update([
+                    'notification_id' => $request->id,
+                    'status' => $request->status
+                ]);
             }
-            $message = MessageController::update($data);
             return response()->json([
                 'success' => true,
                 'message' => 'Chinh sua tin nhan thanh cong',

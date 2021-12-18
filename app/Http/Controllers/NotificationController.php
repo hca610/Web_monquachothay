@@ -53,7 +53,7 @@ class NotificationController extends Controller
 
     function update(array $arr)
     {
-        $notification = UserController::findOrFail($arr['notification_id']);
+        $notification = Notification::findOrFail($arr['notification_id']);
         $notification->fill($arr);
         $notification->save();
         return $notification;
@@ -81,8 +81,10 @@ class NotificationController extends Controller
     public function updateNotification(Request $request)
     {
         try {
-            UserController::checkrole('admin');
-            $notification = Notification::findOrFail($request->id);
+            $notification = Notification::findOrFail($request->notification_id);
+            if (auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the chinh sua thong bao nay');
             if (auth()->user()->role == 'admin') {
                 $notification = $this->update($request->all());
             }
