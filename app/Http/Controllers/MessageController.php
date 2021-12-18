@@ -270,4 +270,26 @@ class MessageController extends Controller
             ]);
         }
     }
+
+    public function countUserUnseenChatWith()
+    {
+        try {
+            $user_id = auth()->user()->user_id;
+            $count = Message::where('receiver_id', $user_id)
+            ->where('status', 'unseen')
+            ->groupBy('sender_id')
+            ->count();
+            return response()->json([
+                'success' => true,
+                'message' => 'Dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
+                'data' => $count,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Da xay ra loi khi dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }

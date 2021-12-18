@@ -41,6 +41,7 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::get('between', 'MessageController@showChat')->name('Show Chat Between 2 users');
     Route::get('between/count', 'MessageController@countInChatByStatus')->name('Count Message in Chat by Status');
     Route::get('lastest', 'MessageController@showLastestChats')->name('Show Lastest Users Chats');
+    Route::get('count/unseen', 'MessageController@countUserUnseenChatWith')->name('Count Users being UNSEEN');
 });
 
 # Report

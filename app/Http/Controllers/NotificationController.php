@@ -90,7 +90,7 @@ class NotificationController extends Controller
             }
             else {
                 $notification = $this->update([
-                    'notification_id' => $request->id,
+                    'notification_id' => $request->notification_id,
                     'status' => $request->status
                 ]);
             }
