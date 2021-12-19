@@ -27,6 +27,8 @@ class ImageController extends Controller
             $image->path = $path;
 
             $image->save();
+            $user->image_link = public_path('storage/images/'.$image->name);
+            $user->save();
 
             return response()->json([
                 'success' => true,
