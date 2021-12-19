@@ -19,7 +19,7 @@ class ImageController extends Controller
             $originalName = $request->file('image')->getClientOriginalName();
             $extension = $request->file('image')->getClientOriginalExtension();
 
-            $path = $request->file('image')->storeAs('/images', $user->user_id.'.'.$extension);
+            $path = $request->file('image')->storeAs('/images', $user->user_id.'.'.$extension, ['disk' => 'public']);
 
             $image = new Image();
 
