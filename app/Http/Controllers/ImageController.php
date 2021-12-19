@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Image;
+use App\Models\User;
 use Exception;
 
 class ImageController extends Controller
@@ -41,5 +42,13 @@ class ImageController extends Controller
                 'message' => $e->getMessage(),
             ]);
         }
+    }
+
+    public function getImage($id) {
+        $user = User::find($id);
+        if ($user->image_link == NULL) {
+            return response()->file(public_path('storage/images/noimage.png'));
+        }
+        return response()->file($user->image_link);
     }
 }
