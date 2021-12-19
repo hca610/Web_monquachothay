@@ -4,29 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Image;
+use Exception;
 
 class ImageController extends Controller
 {
-    public function save(Request $request)
+    public function uploadImage(Request $request)
     {
+        try {
+            $validatedData = $request->validate([
+                'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            ]);
+            $user = auth()->user();
 
-        $validatedData = $request->validate([
-            'image' => 'required|image|mimes:jpg,png,jpeg,gif,svg|max:2048',
+            $originalName = $request->file('image')->getClientOriginalName();
+            $extension = $request->file('image')->getClientOriginalExtension();
 
-        ]);
+            $path = $request->file('image')->storeAs('/images', $user->user_id.'.'.$extension);
 
-        $name = $request->file('image')->getClientOriginalName();
+            $image = new Image();
 
-        $path = $request->file('image')->store('public/images');
+            $image->name = $user->user_id.'.'.$extension;
+            $image->path = $path;
 
+            $image->save();
 
-        $save = new Image();
-
-        $save->name = $name;
-        $save->path = $path;
-
-        $save->save();
-
-        return redirect('upload-image')->with('status', 'Image Has been uploaded');
+            return response()->json([
+                'file' => $image,
+                'success' => true,
+                'message' => 'Upload success',
+                'extension' => $extension,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ]);
+        }
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -100,6 +101,8 @@ Route::group([
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
     Route::get('/users', [UserController::class, 'searchUser']);
 });
+
+Route::post('upload-image', [ImageController::class, 'uploadImage'])->middleware('auth:api');
 
 // Guest
 Route::get('/user/{user}', 'AdminController@showDetailOfAUser');

@@ -29,6 +29,13 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Email hoặc mật khẩu không đúng'
             ]);
+        } else {
+            if (User::where('email', $request->email)
+                ->where('status', 'banned')
+                ->get() != NULL
+            ) {
+                
+            }
         }
 
         return $this->createNewToken($token);
