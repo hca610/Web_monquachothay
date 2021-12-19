@@ -30,11 +30,15 @@ class UserController extends Controller
                 'message' => 'Email hoặc mật khẩu không đúng'
             ]);
         } else {
-            if (User::where('email', $request->email)
-                ->where('status', 'banned')
-                ->get() != NULL
+            if (
+                sizeof(User::where('email', $request->email)
+                    ->where('status', 'banned')
+                    ->get()) > 0
             ) {
-                
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản đã bị khóa',
+                ]);
             }
         }
 
@@ -44,7 +48,6 @@ class UserController extends Controller
     public function register(Request $request)
     {
         try {
-
             if (sizeof(DB::table('users')->where('email', '=', $request->email)->get()) > 0) {
                 throw new Exception('Email đã tồn tại');
             } else if (sizeof(DB::table('users')->where('phonenumber', '=', $request->phonenumber)->get()) > 0) {
