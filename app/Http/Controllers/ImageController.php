@@ -29,10 +29,8 @@ class ImageController extends Controller
             $image->save();
 
             return response()->json([
-                'file' => $image,
                 'success' => true,
-                'message' => 'Upload success',
-                'extension' => $extension,
+                'message' => 'Upload ảnh thành công',
             ]);
         } catch (Exception $e) {
             return response()->json([
