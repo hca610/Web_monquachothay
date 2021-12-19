@@ -205,8 +205,10 @@ class UserController extends Controller
     public function searchUser(Request $request)
     {
         try {
-            $users = User::where('name', 'like', '%' . $request->name . '%')
-                ->where('email', 'like', '%' . $request->email . '%')
+            $users = User::where('name', 'like', '%' . $request->searchContent. '%')
+                ->orWhere('email', 'like', '%' . $request->searchContent. '%')
+                ->orWhere('phonenumber', 'like', '%' . $request->searchContent. '%')
+                ->limit(25)
                 ->get();
 
             return response()->json([
