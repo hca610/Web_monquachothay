@@ -31,6 +31,7 @@ class AdminController extends Controller
                 ->orWhere('address', 'like', "%$searchContent%")
                 ->orWhere('status', 'like', "%$searchContent%")
                 ->orWhere('role', 'like', "%$searchContent%")
+                ->where('role', '<>', 'admin')
                 ->selectRaw('users.*,
                         ( select count(*) from reports rp
                         where rp.sender_id = users.user_id and rp.status != "hidden"

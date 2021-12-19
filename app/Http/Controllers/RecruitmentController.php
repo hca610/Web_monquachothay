@@ -55,10 +55,12 @@ class RecruitmentController extends Controller
             ->get();
 
         foreach ($recruitments as $recruitment) {
-            $collection->push([
-                'recruitment' => $recruitment,
-                'emloyer' => $recruitment->employer,
-            ]);
+            if ($recruitment->employer->user->status == 'active')
+                $collection->push([
+                    'recruitment' => $recruitment,
+                    'emloyer' => $recruitment->employer,
+                    'user' => $recruitment->employer->user,
+                ]);
         }
 
         return $collection;

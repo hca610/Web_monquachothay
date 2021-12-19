@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ImageController;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -98,8 +99,13 @@ Route::group([
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
     Route::post('/change-password ', [UserController::class, 'changePassWord']);
     Route::post('/user-profile', [UserController::class, 'updateProfile']);
+    Route::get('/users', [UserController::class, 'searchUser']);
+    Route::post('upload-image', [ImageController::class, 'uploadImage']);
 });
+
+Route::get('get-image/{id}', [ImageController::class, 'getImage']);
 
 // Guest
 Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
 Route::get('/employers', 'EmployerController@showAllEmployer');
+

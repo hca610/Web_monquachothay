@@ -29,6 +29,17 @@ class UserController extends Controller
                 'success' => false,
                 'message' => 'Email hoặc mật khẩu không đúng'
             ]);
+        } else {
+            if (
+                sizeof(User::where('email', $request->email)
+                    ->where('status', 'banned')
+                    ->get()) > 0
+            ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Tài khoản đã bị khóa',
+                ]);
+            }
         }
 
         return $this->createNewToken($token);
@@ -37,7 +48,6 @@ class UserController extends Controller
     public function register(Request $request)
     {
         try {
-
             if (sizeof(DB::table('users')->where('email', '=', $request->email)->get()) > 0) {
                 throw new Exception('Email đã tồn tại');
             } else if (sizeof(DB::table('users')->where('phonenumber', '=', $request->phonenumber)->get()) > 0) {
@@ -190,5 +200,26 @@ class UserController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+
+    public function searchUser(Request $request)
+    {
+        try {
+            $users = User::where('name', 'like', '%' . $request->searchContent. '%')
+                ->orWhere('email', 'like', '%' . $request->searchContent. '%')
+                ->orWhere('phonenumber', 'like', '%' . $request->searchContent. '%')
+                ->limit(25)
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'users' => $users,
+            ]);
+        } catch (Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra',
+            ]);
+        }
     }
 }

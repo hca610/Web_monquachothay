@@ -15,7 +15,7 @@ class Employer extends Model
 
     public function user()
     {
-        return $this->hasOne(User::class, 'user_id');
+        return $this->hasOne(User::class, 'user_id', 'user_id');
     }
 
     public function recruitments()
