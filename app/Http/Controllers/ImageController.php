@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class ImageController extends Controller
 {
@@ -20,16 +21,16 @@ class ImageController extends Controller
             $originalName = $request->file('image')->getClientOriginalName();
             $extension = $request->file('image')->getClientOriginalExtension();
 
-            $path = $request->file('image')->storeAs('/images', $user->user_id.'.'.$extension, ['disk' => 'public']);
+            $path = $request->file('image')->storeAs('/images', $user->user_id . '.' . $extension, ['disk' => 'public']);
 
             $image = new Image();
 
-            $image->name = $user->user_id.'.'.$extension;
-            $image->path = $path;
+            $image->name = $user->user_id . '.' . $extension;
+            $image->path = public_path('storage/images/' . $image->name);
 
             $image->save();
 
-            $user->image_link = public_path('storage/images/'.$image->name);
+            $user->image_link = url('/') . '/api/get-image/' . $user->user_id;
             $user->save();
 
             return response()->json([
@@ -44,12 +45,17 @@ class ImageController extends Controller
         }
     }
 
-    public function getImage($id) {
-        $user = User::find($id);
-        if ($user->image_link == NULL) {
-            return response()->file(public_path('storage/images/noimage.png'));
-        }
+    public function getImage($user_id)
+    {
+        $images = DB::table('images')
+            ->where('name', 'like', $user_id . '%')
+            ->orderByDesc('created_at')
+            ->limit(1)
+            ->get();
 
-        return response()->file(public_path('storage/images/...jpg'));
+        if (sizeof($images) > 0)
+            return response()->file($images[0]->path);
+        else
+            return response()->file(public_path('storage/images/' . 'noimage.png'));
     }
 }
