@@ -49,6 +49,7 @@ class MessageController extends Controller
     public function updateMessage(Request $request)
     {
         try {
+            echo $request->message_id;
             $message = Message::findOrFail($request->message_id);
             if (auth()->user()->role != 'admin' &&
                 $message->sender_id != auth()->user()->user_id &&
@@ -59,7 +60,7 @@ class MessageController extends Controller
             }
             else {
                 $message = $this->update([
-                    'notification_id' => $request->id,
+                    'message_id' => $request->message_id,
                     'status' => $request->status
                 ]);
             }
