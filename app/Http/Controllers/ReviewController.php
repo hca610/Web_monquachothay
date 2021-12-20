@@ -30,13 +30,13 @@ class ReviewController extends Controller
             $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Tao review thanh cong',
+                'message' => 'Tạo review thành công',
                 'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tao review khong thanh cong',
+                'message' => 'Tạo review không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -52,20 +52,20 @@ class ReviewController extends Controller
             ->where('receiver_id', $data['receiver_id'])
             ->first();
             if ($review == null)
-                throw new Exception('Review khong ton tai');
+                throw new Exception('Review không tồn tại');
             if (auth()->user()->role != 'admin' &&
                 $review->sender_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the chinh sua review nay');
+                throw new Exception('Người dùng không thể chỉnh sửa review này');
             $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Chinh sua review thanh cong',
+                'message' => 'Chỉnh sửa review thành công',
                 'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chinh sua review khong thanh cong',
+                'message' => 'Chỉnh sửa review không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -80,13 +80,13 @@ class ReviewController extends Controller
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so phai hoi ve nguoi dung '.$receiver_id.' thanh cong',
+                'message' => 'Đếm số phản hồi về người dùng '.$receiver_id.' thành công',
                 'data' => $count,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi dem so phai hoi ve nguoi dung '.$receiver_id,
+                'message' => 'Xảy ra lỗi khi đếm số phản hồi về người dùng '.$receiver_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -97,20 +97,20 @@ class ReviewController extends Controller
         try {
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
-                throw new Exception('Nguoi dung khong the dem so luong review duoc gui boi nguoi dung '.$sender_id);
+                throw new Exception('Người dùng không thể đếm số lương review được gửi bởi người dùng '.$sender_id);
             $count = Review::
             where('sender_id', $sender_id)
             ->where('status', '!=', 'hidden')
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so phai hoi tu nguoi dung '.$sender_id.' thanh cong',
+                'message' => 'Đếm số review từ người dùng '.$sender_id.' thành công',
                 'data' => $count,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi dem so phai hoi tu nguoi dung '.$sender_id,
+                'message' => 'Xảy ra lỗi khi đếm số lượng review từ người dùng '.$sender_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -131,13 +131,13 @@ class ReviewController extends Controller
             ->paginate(20);
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem tat ca phai hoi ve nguoi dung '.$receiver_id.' thanh cong',
+                'message' => 'Tìm kiếm tất cả review về người dùng '.$receiver_id.' thành công',
                 'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi tim kiem tat ca phai hoi ve nguoi dung '.$receiver_id,
+                'message' => 'Xảy ra lỗi khi tìm kiếm tất cả review về người dùng '.$receiver_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -148,7 +148,7 @@ class ReviewController extends Controller
         try {
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
-                throw new Exception('Nguoi dung khong the xem review duoc gui boi nguoi dung '.$sender_id);
+                throw new Exception('Người dùng không thể xem review được gửi từ người dùng '.$sender_id);
             $reviews = Review::orderByDesc('created_at')
             ->where('sender_id', $sender_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
@@ -161,13 +161,13 @@ class ReviewController extends Controller
             ->paginate(20);
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem tat ca phai hoi tu nguoi dung '.$sender_id.' thanh cong',
+                'message' => 'Tìm kiếm tất cả review từ người dùng '.$sender_id.' thành công',
                 'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi tim kiem tat ca phai hoi tu nguoi dung '.$sender_id,
+                'message' => 'Xảy ra lỗi khi tìm kiếm tất cả review từ người dùng '.$sender_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -188,13 +188,13 @@ class ReviewController extends Controller
             ->paginate(20);
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem tat ca phai hoi tren he thong thanh cong',
+                'message' => 'Tìm kiếm tất cả review trên hệ thống thành công',
                 'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi tim kiem tat ca phai hoi trong he thong',
+                'message' => 'Xảy ra lỗi khi tìm kiếm tất cả review trên hệ thống',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -206,7 +206,7 @@ class ReviewController extends Controller
             $review = Review::findOrFail($review_id);
             if (auth()->user()->role != 'admin' &&
                 auth()->user()->user_id != $review->sender_id)
-                throw new Exception('Nguoi dung khong the xem review '.$review_id);
+                throw new Exception('Người dùng không thể xem review '.$review_id);
             $review = Review::where('review_id', $review_id)
             ->join('users as sender', 'sender.user_id', '=', 'reviews.sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'reviews.receiver_id')
@@ -218,13 +218,13 @@ class ReviewController extends Controller
             ->get()[0];
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem phai hoi '.$review_id.' tren he thong thanh cong',
+                'message' => 'Tìm kiếm phản hồi '.$review_id.' trên hệ thống thành công',
                 'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi tim kiem phai hoi '.$review_id.' trong he thong',
+                'message' => 'Xảy ra lỗi khi tìm kiếm phản hồi '.$review_id.' trên hệ thống',
                 'error' => $e->getMessage(),
             ]);
         }
