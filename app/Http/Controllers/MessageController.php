@@ -59,7 +59,7 @@ class MessageController extends Controller
             }
             else {
                 $message = $this->update([
-                    'notification_id' => $request->id,
+                    'message_id' => $request->message_id,
                     'status' => $request->status
                 ]);
             }

@@ -26,7 +26,7 @@ class DatabaseSeeder extends Seeder
         \App\Models\Recruitment::factory(30)->create();
         JobseekerRecruitmentSeeder::run();
         \App\Models\Notification::factory(50)->create();
-        \App\Models\Report::factory(500)->create();
-        \App\Models\Message::factory(2500)->create();
+        \App\Models\Report::factory(50)->create();
+        \App\Models\Message::factory(50)->create();
     }
 }
