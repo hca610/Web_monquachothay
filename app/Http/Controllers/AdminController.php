@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-use App\Models\Report;
+use App\Models\Review;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -33,12 +33,12 @@ class AdminController extends Controller
                 ->orWhere('role', 'like', "%$searchContent%")
                 ->where('role', '<>', 'admin')
                 ->selectRaw('users.*,
-                        ( select count(*) from reports rp
+                        ( select count(*) from reviews rp
                         where rp.sender_id = users.user_id and rp.status != "hidden"
-                        ) as report_sent,
-                        ( select count(*) from reports rp
+                        ) as review_sent,
+                        ( select count(*) from reviews rp
                         where rp.receiver_id = users.user_id and rp.status != "hidden"
-                        ) as report_received')
+                        ) as review_received')
                 ->paginate(20);
 
             return response()->json([
