@@ -9,15 +9,14 @@ class Report extends Model
 {
     use HasFactory;
 
-    
     protected $primaryKey = 'report_id';
     protected $fillable = ['detail', 'status', 'sender_id', 'receiver_id'];
 
-    public function from() {
-        return $this->belongsTo(User::class, 'user_id');
+    public function sender() {
+        return $this->belongsTo(User::class, 'sender_id', 'user_id');
     }
 
-    public function to() {
-        return $this->belongsTo(User::class, 'user_id');
+    public function receiver() {
+        return $this->belongsTo(User::class, 'receiver_id', 'user_id');
     }
 }

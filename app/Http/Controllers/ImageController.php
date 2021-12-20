@@ -49,6 +49,7 @@ class ImageController extends Controller
         if ($user->image_link == NULL) {
             return response()->file(public_path('storage/images/noimage.png'));
         }
-        return response()->file($user->image_link);
+
+        return response()->file(public_path('storage/images/...jpg'));
     }
 }

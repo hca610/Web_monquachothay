@@ -16,7 +16,7 @@ class Notification extends Model
     protected $fillable = ['title', 'detail', 'status', 'receiver_id'];
 
     public function receiver(){
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'receiver_id', 'user_id');
     }
 
     public function broadcastOn($event)
