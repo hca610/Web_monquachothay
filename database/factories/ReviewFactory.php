@@ -2,21 +2,21 @@
 
 namespace Database\Factories;
 
-use App\Models\Report;
+use App\Models\Review;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use App\Models\User;
 use Illuminate\Support\Arr;
 
-use CreateReportsTable;
+use CreateReviewsTable;
 
-class ReportFactory extends Factory
+class ReviewFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Report::class;
+    protected $model = Review::class;
 
     /**
      * Define the model's default state.
@@ -27,7 +27,7 @@ class ReportFactory extends Factory
     {
         return [
             'detail' => $this->faker->text(200),
-            'status'=> Arr::random(CreateReportsTable::$status_list),
+            'status'=> Arr::random(CreateReviewsTable::$status_list),
             'sender_id' => User::all()->random()->user_id,
             'receiver_id' => User::all()->random()->user_id
         ];

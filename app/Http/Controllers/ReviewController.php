@@ -2,77 +2,79 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Report;
+use App\Models\Review;
 use Exception;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\UserController;
 
-class ReportController extends Controller
+class ReviewController extends Controller
 {
-    protected function create(array $arr)
+    protected function updateOrCreate(array $arr)
     {
-        $report = new Report;
-        $report->fill($arr);
-        $report->save();
-        return $report;
+        $review = Review::where('sender_id', $arr['sender_id'])
+        ->where('receiver_id', $arr['receiver_id'])
+        ->first();
+        if ($review == null)
+            $review = new Review;
+        $review->fill($arr);
+        $review->save();
+        return $review;
     }
 
-    protected function update(array $arr)
-    {
-        $report = Report::findOrFail($arr['report_id']);
-        $report->fill($arr);
-        $report->save();
-        return $report;
-    }
-
-    public function createReport(Request $request)
+    public function createReview(Request $request)
     {
         try {
             $data = $request->all();
             $data['sender_id'] = auth()->user()->user_id;
-            $report = self::create($data);
+            $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Tao phan hoi thanh cong',
-                'data' => $report,
+                'message' => 'Tao review thanh cong',
+                'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tao phan hoi khong thanh cong',
+                'message' => 'Tao review khong thanh cong',
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    public function updateReport(Request $request)
+    public function updateReview(Request $request)
     {
         try {
             $data = $request->all();
-            $report = Report::findOrFail($data['report_id']);
+            if (!$request->has('sender_id'))
+                $data['sender_id'] = auth()->user()->user_id;
+            $review = Review::where('sender_id', $data['sender_id'])
+            ->where('receiver_id', $data['receiver_id'])
+            ->first();
+            if ($review == null)
+                throw new Exception('Review khong ton tai');
             if (auth()->user()->role != 'admin' &&
-                $report->sender_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the chinh sua phan hoi nay');
-            $report = self::update($data);
+                $review->sender_id != auth()->user()->user_id)
+                throw new Exception('Nguoi dung khong the chinh sua review nay');
+            $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Chinh sua phan hoi thanh cong',
-                'data' => $report,
+                'message' => 'Chinh sua review thanh cong',
+                'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chinh sua phan hoi khong thanh cong',
+                'message' => 'Chinh sua review khong thanh cong',
                 'error' => $e->getMessage(),
             ]);
         }
     }
 
-    public function countReportstoUser($receiver_id)
+    public function countReviewstoUser($receiver_id)
     {
         try {
-            $count = Report::
+            $count = Review::
             where('receiver_id', $receiver_id)
             ->where('status', '!=', 'hidden')
             ->count();
@@ -90,13 +92,13 @@ class ReportController extends Controller
         }
     }
 
-    public function countReportsfromUser($sender_id)
+    public function countReviewsfromUser($sender_id)
     {
         try {
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
-                throw new Exception('Nguoi dung khong the dem so luong phan hoi duoc gui boi nguoi dung '.$sender_id);
-            $count = Report::
+                throw new Exception('Nguoi dung khong the dem so luong review duoc gui boi nguoi dung '.$sender_id);
+            $count = Review::
             where('sender_id', $sender_id)
             ->where('status', '!=', 'hidden')
             ->count();
@@ -114,14 +116,14 @@ class ReportController extends Controller
         }
     }
 
-    public function showReportstoUser($receiver_id)
+    public function showReviewstoUser($receiver_id)
     {
         try {
-            $reports = Report::orderByDesc('created_at')
+            $reviews = Review::orderByDesc('created_at')
             ->where('receiver_id', $receiver_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
-            ->select('reports.*', 
+            ->select('reviews.*', 
                     'sender.name as sender_name', 
                     'sender.email as sender_email', 
                     'receiver.name as receiver_name', 
@@ -130,7 +132,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem tat ca phai hoi ve nguoi dung '.$receiver_id.' thanh cong',
-                'data' => $reports,
+                'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -141,17 +143,17 @@ class ReportController extends Controller
         }
     }
 
-    public function showReportsfromUser($sender_id)
+    public function showReviewsfromUser($sender_id)
     {
         try {
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
-                throw new Exception('Nguoi dung khong the xem phan hoi duoc gui boi nguoi dung '.$sender_id);
-            $reports = Report::orderByDesc('created_at')
+                throw new Exception('Nguoi dung khong the xem review duoc gui boi nguoi dung '.$sender_id);
+            $reviews = Review::orderByDesc('created_at')
             ->where('sender_id', $sender_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
-            ->select('reports.*', 
+            ->select('reviews.*', 
                     'sender.name as sender_name', 
                     'sender.email as sender_email', 
                     'receiver.name as receiver_name', 
@@ -160,7 +162,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem tat ca phai hoi tu nguoi dung '.$sender_id.' thanh cong',
-                'data' => $reports,
+                'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -171,14 +173,14 @@ class ReportController extends Controller
         }
     }
 
-    public function showAllReports()
+    public function showAllReviews()
     {
         try {
             UserController::checkrole('admin');
-            $reports = Report::orderByDesc('created_at')
+            $reviews = Review::orderByDesc('created_at')
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
-            ->select('reports.*', 
+            ->select('reviews.*', 
                     'sender.name as sender_name', 
                     'sender.email as sender_email', 
                     'receiver.name as receiver_name', 
@@ -187,7 +189,7 @@ class ReportController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Tim kiem tat ca phai hoi tren he thong thanh cong',
-                'data' => $reports,
+                'data' => $reviews,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -198,17 +200,17 @@ class ReportController extends Controller
         }
     }
 
-    public function showReport($report_id)
+    public function showReview($review_id)
     {
         try {
-            $report = Report::findOrFail($report_id);
+            $review = Review::findOrFail($review_id);
             if (auth()->user()->role != 'admin' &&
-                auth()->user()->user_id != $report->sender_id)
-                throw new Exception('Nguoi dung khong the xem phan hoi '.$report_id);
-            $report = Report::where('report_id', $report_id)
-            ->join('users as sender', 'sender.user_id', '=', 'reports.sender_id')
-            ->join('users as receiver', 'receiver.user_id', '=', 'reports.receiver_id')
-            ->select('reports.*', 
+                auth()->user()->user_id != $review->sender_id)
+                throw new Exception('Nguoi dung khong the xem review '.$review_id);
+            $review = Review::where('review_id', $review_id)
+            ->join('users as sender', 'sender.user_id', '=', 'reviews.sender_id')
+            ->join('users as receiver', 'receiver.user_id', '=', 'reviews.receiver_id')
+            ->select('reviews.*', 
                     'sender.name as sender_name', 
                     'sender.email as sender_email', 
                     'receiver.name as receiver_name', 
@@ -216,13 +218,13 @@ class ReportController extends Controller
             ->get()[0];
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem phai hoi '.$report_id.' tren he thong thanh cong',
-                'data' => $report,
+                'message' => 'Tim kiem phai hoi '.$review_id.' tren he thong thanh cong',
+                'data' => $review,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Xay ra loi khi tim kiem phai hoi '.$report_id.' trong he thong',
+                'message' => 'Xay ra loi khi tim kiem phai hoi '.$review_id.' trong he thong',
                 'error' => $e->getMessage(),
             ]);
         }
