@@ -103,7 +103,7 @@ Route::group([
     Route::post('upload-image', [ImageController::class, 'uploadImage']);
 });
 
-Route::get('get-image/{user_id}', [ImageController::class, 'getImage']);
+Route::get('get-image/{id}', [ImageController::class, 'getImage']);
 
 // Guest
 Route::get('/user/{user}', 'AdminController@showDetailOfAUser');

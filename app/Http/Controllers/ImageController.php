@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use App\Models\Image;
 use App\Models\User;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class ImageController extends Controller
 {
@@ -26,11 +25,11 @@ class ImageController extends Controller
             $image = new Image();
 
             $image->name = $user->user_id . '.' . $extension;
-            $image->path = public_path('storage/images/' . $image->name);
+            $image->path = $path;
 
             $image->save();
 
-            $user->image_link = url('/') . '/api/get-image/' . $user->user_id;
+            $user->image_link = public_path('storage/images/' . $image->name);
             $user->save();
 
             return response()->json([
@@ -45,17 +44,13 @@ class ImageController extends Controller
         }
     }
 
-    public function getImage($user_id)
+    public function getImage($id)
     {
-        $images = DB::table('images')
-            ->where('name', 'like', $user_id . '%')
-            ->orderByDesc('created_at')
-            ->limit(1)
-            ->get();
-
-        if (sizeof($images) > 0)
-            return response()->file($images[0]->path);
-        else
-            return response()->file(public_path('storage/images/' . 'noimage.png'));
+        try {
+            $user = User::findOrFail($id);
+            return response()->file($user->image_link);
+        } catch (Exception $e) {
+            return response()->file(public_path('storage/images/noimage.png'));
+        }
     }
 }
