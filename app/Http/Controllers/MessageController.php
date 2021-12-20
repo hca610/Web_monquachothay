@@ -49,7 +49,6 @@ class MessageController extends Controller
     public function updateMessage(Request $request)
     {
         try {
-            echo $request->message_id;
             $message = Message::findOrFail($request->message_id);
             if (auth()->user()->role != 'admin' &&
                 $message->sender_id != auth()->user()->user_id &&
