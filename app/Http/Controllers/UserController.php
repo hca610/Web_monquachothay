@@ -58,6 +58,8 @@ class UserController extends Controller
             $user->fill($request->all());
             $user->password = bcrypt($request->password);
             $user->save();
+            $user->image_link = url('/') . '/api/get-image/' . $user->user_id;
+            $user->save();
 
             switch ($request->role) {
                 case 'jobseeker':

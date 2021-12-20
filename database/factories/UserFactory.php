@@ -30,7 +30,6 @@ class UserFactory extends Factory
             'phonenumber' => $this->faker->unique()->phoneNumber(),
             'address' => $this->faker->address(),
             'status' => 'active',
-            'image_link' => $this->faker->imageUrl(),
         ];
     }
 

@@ -38,12 +38,17 @@ class User extends Authenticatable implements JWTSubject
 
     public function notifications()
     {
-        return $this->hasMany(Notification::class, 'user_id');
+        return $this->hasMany(Notification::class, 'user_id', 'receiver_id');
     }
 
-    public function messages()
+    public function sentReports()
     {
-        return $this->hasMany(Message::class, 'user_id');
+        return $this->hasMany(Report::class, 'user_id', 'sender_id');
+    }
+
+    public function receivedReports()
+    {
+        return $this->hasMany(Report::class, 'user_id', 'receiver_id');
     }
 
     public function employer()

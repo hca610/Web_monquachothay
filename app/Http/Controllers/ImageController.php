@@ -20,16 +20,16 @@ class ImageController extends Controller
             $originalName = $request->file('image')->getClientOriginalName();
             $extension = $request->file('image')->getClientOriginalExtension();
 
-            $path = $request->file('image')->storeAs('/images', $user->user_id.'.'.$extension, ['disk' => 'public']);
+            $path = $request->file('image')->storeAs('/images', $user->user_id . '.' . $extension, ['disk' => 'public']);
 
             $image = new Image();
 
-            $image->name = $user->user_id.'.'.$extension;
+            $image->name = $user->user_id . '.' . $extension;
             $image->path = $path;
 
             $image->save();
 
-            $user->image_link = public_path('storage/images/'.$image->name);
+            $user->image_link = public_path('storage/images/' . $image->name);
             $user->save();
 
             return response()->json([
@@ -44,11 +44,13 @@ class ImageController extends Controller
         }
     }
 
-    public function getImage($id) {
-        $user = User::find($id);
-        if ($user->image_link == NULL) {
+    public function getImage($id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            return response()->file($user->image_link);
+        } catch (Exception $e) {
             return response()->file(public_path('storage/images/noimage.png'));
         }
-        return response()->file($user->image_link);
     }
 }
