@@ -182,7 +182,7 @@ class EmployerController extends Controller
             $employers = DB::table('employers')
                 ->join('users', 'users.user_id', '=', 'employers.user_id')
                 ->where('name', 'like', '%' . $request->searchContent . '%')
-                ->where('category', 'like', '%' . $request->searchContent . '%')
+                ->orWhere('category', 'like', '%' . $request->searchContent . '%')
                 ->paginate(15);
 
             return response()->json([
