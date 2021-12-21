@@ -96,7 +96,13 @@ class JobSeekerController extends Controller
     {
         try {
             $jobSeeker = auth()->user()->jobSeeker;
-            $recruitments = $jobSeeker->recruitments;
+            $recruitments = DB::table('recruitments')
+                ->join('job_seeker_recruitment', 'recruitments.recruitment_id', '=', 'job_seeker_recruitment.recruitment_id')
+                ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
+                ->join('employers', 'employers.employer_id', '=', 'recruitments.employer_id')
+                ->join('users', 'users.user_id', '=', 'employers.user_id')
+                ->where('job_seeker_recruitment.job_seeker_id', $jobSeeker->job_seeker_id)
+                ->get();
 
             return response()->json([
                 'success' => true,
