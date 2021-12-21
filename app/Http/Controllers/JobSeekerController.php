@@ -98,11 +98,9 @@ class JobSeekerController extends Controller
     {
         try {
             $collection = new Collection();
+            if (auth()->user()->role != 'jobseeker')
+                throw new Exception('Bạn không phải là người tìm việc');
             $jobSeeker = auth()->user()->jobSeeker;
-
-            // $recruitments = Recruitment::orderByDesc('created_at')
-            // ->
-            // ->get();
 
             $recruitments = DB::table('recruitments')
             ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
@@ -126,7 +124,6 @@ class JobSeekerController extends Controller
                         'isFollowing' => $following,
                         'applicationStatus' => $applicationStatus,
                     ]);
-                    // return $recruitments;
                 }
             }
 

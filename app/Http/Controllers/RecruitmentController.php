@@ -12,7 +12,7 @@ class RecruitmentController extends Controller
 {
     public function showAllRecruitment(Request $request)
     {
-        if (auth()->user() != NULL)
+        if (auth()->user() != NULL && auth()->user()->role == 'jobseeker')
             return response()->json($this->showAllRecruitmentAsJobSeeker($request));
         else
             return response()->json($this->showAllRecruitmentAsGuest($request));
@@ -144,5 +144,13 @@ class RecruitmentController extends Controller
         } catch (Exception $e) {
             return NULL;
         }
+    }
+
+    public function showAllRecruitmentOfAEmployer($id)
+    {
+        return DB::table('employers')
+            ->join('users', 'employers.user_id', '=', 'users.user_id')
+            ->join('recruitments', 'recruitments.employer_id', '=', 'employers.employer_id')
+            ->get();
     }
 }
