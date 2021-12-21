@@ -120,6 +120,7 @@ class RecruitmentController extends Controller
                 $collection->push([
                     'recruitment' => $recruitment,
                     'employer' => $recruitment->employer,
+                    'user' => $recruitment->employer->user,
                     'isFollowing' => $following,
                     'applicationStatus' => $applicationStatus,
                 ]);
