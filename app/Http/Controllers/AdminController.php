@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobSeeker;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Review;
@@ -64,9 +65,11 @@ class AdminController extends Controller
             $user->status = $request->status;
             $user->save();
 
-            if ($request->status == 'banned')
+            if ($request->status == 'banned') {
                 $message = 'Đã chặn người dùng';
-            else if ($request->status == 'active')
+                if ($user->role == 'employer')
+                    $this->createNotificationToAllJobseekerApplyingToEmployer($user->employer);
+            } else if ($request->status == 'active')
                 $message = 'Đã gỡ chặn người dùng';
 
             return response()->json([
@@ -120,5 +123,24 @@ class AdminController extends Controller
             'expires_in' => auth()->factory()->getTTL() * 60,
             'user' => auth()->user()
         ]);
+    }
+
+    public function createNotificationToAllJobseekerApplyingToEmployer($employer)
+    {
+        $jobSeekers = DB::table('employers')
+            ->join('recruitments', 'employers.employer_id', '=', "recruitments.employer_id")
+            ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
+            ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
+            ->where('recruitments.employer_id', $employer->employer_id)
+            ->get('job_seekers.job_seeker_id');
+
+        foreach ($jobSeekers as $jobSeeker) {
+            NotificationController::create([
+                'title' => 'Tài khoản nhà tuyển dụng đã bị khóa',
+                'status' => 'unseen',
+                'detail' => 'Tài khoản của nhà tuyển dụng của việc làm mà bạn đang theo dõi đã bị khóa',
+                'receiver_id' => $jobSeeker->job_seeker_id,
+            ]);
+        }
     }
 }
