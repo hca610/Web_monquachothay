@@ -32,12 +32,13 @@ class NotificationController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
+                'message' => 'Tìm kiếm tất cả thông báo trên hệ thông thành công',
                 'data' => $notifications
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tim kiem toan bo thong bao bi loi',
+                'message' => 'Tìm kiếm tất cả thông báo trên hệ thống không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -66,13 +67,13 @@ class NotificationController extends Controller
             $notification = $this->create($request->all());
             return response()->json([
                 'success' => true,
-                'message' => 'Tao thong bao thanh cong',
+                'message' => 'Tạo thông báo thành công',
                 'data' => $notification,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tao thong bao khong thanh cong',
+                'message' => 'Tạo thông báo không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -84,7 +85,7 @@ class NotificationController extends Controller
             $notification = Notification::findOrFail($request->notification_id);
             if (auth()->user()->role != 'admin' &&
                 $notification->receiver_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the chinh sua thong bao nay');
+                throw new Exception('Người dùng không thể chỉnh sửa thông báo này');
             if (auth()->user()->role == 'admin') {
                 $notification = $this->update($request->all());
             }
@@ -96,13 +97,13 @@ class NotificationController extends Controller
             }
             return response()->json([
                 'success' => true,
-                'message' => 'Cap nhat thong bao thanh cong',
+                'message' => 'Cập nhật thông báo thành công',
                 'data' => $notification,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Cap nhat thong bao khong thanh cong',
+                'message' => 'Cập nhật thông báo không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -115,16 +116,16 @@ class NotificationController extends Controller
             $notification = Notification::findOrFail($notification_id);
             if (auth()->user()->role != 'admin' &&
                 $notification->receiver_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem thong bao nay');
+                throw new Exception('Người dùng không thể xem thông báo này');
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem thong bao thanh con',
+                'message' => 'Tìm kiếm thông báo thành công',
                 'notification' => $notification,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi tim kiem',
+                'message' => 'Đã xảy ra lỗi khi tìm kiếm',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -147,7 +148,7 @@ class NotificationController extends Controller
                 $get = 1;
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem thong bao cua nguoi dung '.$user_id);
+                throw new Exception('Người dùng không thể xem thông báo của người dùng '.$user_id);
             $notifications = Notification::orderByRaw('created_at DESC, notification_id DESC')
             ->where('receiver_id', $user_id)
             ->where(function ($query) use ($before) {
@@ -160,13 +161,13 @@ class NotificationController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem thong bao cua nguoi dung '.$user_id.' thanh cong',
+                'message' => 'Tìm kiếm thông báo của người dùng '.$user_id.' thành công',
                 'data' => $notifications,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi tim kiem thong bao cua nguoi dung ' . $user_id,
+                'message' => 'Đã xảy ra lỗi khi tìm kiếm thông báo của người dùng ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -181,23 +182,23 @@ class NotificationController extends Controller
                 $user_id = auth()->user()->user_id;
             $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
-                throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
+                throw new Exception('Trạng thái (status) của thông báo '.strtoupper($status).' không hợp lệ');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem so luong thong bao '.strtoupper($status).' cua nguoi dung '.$user_id);
+                throw new Exception('Người dùng không thể xem số lượng thông báo '.strtoupper($status).' của người dùng '.$user_id);
             $counter = Notification::
             where('receiver_id', $user_id)
             ->where('status', $status)
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so luong thong bao '.strtoupper($status).' cua nguoi dung '.$user_id.' thanh cong',
+                'message' => 'Đếm số lượng thông báo '.strtoupper($status).' của người dùng '.$user_id.' thành công',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi dem so luong thong bao '.strtoupper($status).' cua nguoi dung ' . $user_id,
+                'message' => 'Đã xảy ra lỗi khi đếm số lượng thông báo '.strtoupper($status).' của người dùng ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -220,10 +221,10 @@ class NotificationController extends Controller
                 $get = 1;
             $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
-                throw new Exception('Trang thai (status) thong bao '.strtoupper($status).' khong hop le');
+                throw new Exception('Trạng thái (status) của thông báo '.strtoupper($status).' không hợp lệ');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id);
+                throw new Exception('Người dùng không thể xem thông báo '.strtoupper($status).' của người dùng '.$user_id);
             $counter = Notification::orderByRaw('created_at DESC, notification_id DESC')
             ->where('receiver_id', $user_id)
             ->where('status', $status)
@@ -237,13 +238,13 @@ class NotificationController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem thong bao '.strtoupper($status).' cua nguoi dung '.$user_id.' thanh cong',
+                'message' => 'Tìm kiếm thông báo '.strtoupper($status).' của người dùng '.$user_id.' thành công',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi tim kiem thong bao '.strtoupper($status).' cua nguoi dung ' . $user_id,
+                'message' => 'Đã xảy ra lỗi khi tìm kiếm thông báo '.strtoupper($status).' của người dùng ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }

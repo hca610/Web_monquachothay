@@ -189,7 +189,7 @@ class UserController extends Controller
     static function checkrole($role)
     {
         if (!self::simplecheckrole($role)) {
-            throw new Exception('Ban khong phai la ' . $role);
+            throw new Exception('Bạn không phải là ' . $role);
         }
         return $role;
     }

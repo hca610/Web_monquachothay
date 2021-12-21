@@ -34,13 +34,13 @@ class MessageController extends Controller
             $message = self::create($data);
             return response()->json([
                 'success' => true,
-                'message' => 'Tao tin nhan thanh cong',
+                'message' => 'Tạo tin nhắn thành công',
                 'data' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tao tin nhan khong thanh cong',
+                'message' => 'Tạo tin nhắn không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -53,7 +53,7 @@ class MessageController extends Controller
             if (auth()->user()->role != 'admin' &&
                 $message->sender_id != auth()->user()->user_id &&
                 $message->receiver_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the chinh sua tin nhan nay');
+                throw new Exception('Người dùng không thể chỉnh sửa tin nhắn này');
             if (auth()->user()->role == 'admin') {
                 $message = $this->update($request->all());
             }
@@ -65,13 +65,13 @@ class MessageController extends Controller
             }
             return response()->json([
                 'success' => true,
-                'message' => 'Chinh sua tin nhan thanh cong',
+                'message' => 'Chỉnh sửa tin nhắn thành công',
                 'data' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Chinh sua tin nhan khong thanh cong',
+                'message' => 'Chỉnh sửa tin nhắn không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -95,7 +95,7 @@ class MessageController extends Controller
                 $get = 1;
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $user_id)
-                throw new Exception('Nguoi dung khong the xem cuoc tro chuyen nay');
+                throw new Exception('Người dùng không thể xem cuộc trò chuyện này');
             $messages = Message::orderByRaw('created_at DESC, message_id DESC')
             ->where(function ($query) use ($user_id, $other_id) {
                 $query
@@ -120,13 +120,13 @@ class MessageController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem cuoc tro chuyen thanh cong',
+                'message' => 'Tìm kiếm cuộc trò chuyện thành công',
                 'data' => $messages,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tim kiem cuoc tro chuyen khong thanh cong',
+                'message' => 'Tìm kiếm cuộc trò chuyện không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -155,13 +155,13 @@ class MessageController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem tat ca tin nhan thanh cong',
+                'message' => 'Tìm kiếm tất cả tin nhắn thành công',
                 'data' => $messages,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tim kiem tat ca tin nhan khong thanh cong',
+                'message' => 'Tìm kiếm tất cả tin nhắn không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -175,16 +175,16 @@ class MessageController extends Controller
             if (auth()->user()->role != 'admin' &&
                 auth()->user()->user_id != $message->sender_id &&
                 auth()->user()->user_id != $message->receiver_id )
-                throw new Exception('Nguoi dung khong the xem tin nhan '.$message_id);
+                throw new Exception('Người dùng không thể xem tin nhắn '.$message_id);
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem tin nhan '.$message_id.' thanh cong',
+                'message' => 'Tìm kiếm tin nhắn '.$message_id.' thành công',
                 'data' => $message,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Tim kiem tin nhan '.$message_id.' khong thanh cong',
+                'message' => 'Tìm kiếm tin nhắn '.$message_id.' không thành công',
                 'error' => $e->getMessage(),
             ]);
         }
@@ -200,10 +200,10 @@ class MessageController extends Controller
             $other_id = $request->other_id;
             $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
-                throw new Exception('Trang thai (status) tin nhan '.strtoupper($status).' khong hop le');
+                throw new Exception('Trạng thái (status) tin nhan '.strtoupper($status).' không hợp lệ');
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id);
+                throw new Exception('Người dùng không thể xem số lượng tin nhắn '.strtoupper($status).' của người dùng '.$user_id.' từ người dùng '.$other_id);
             $counter = Message::
             where('receiver_id', $user_id)
             ->where('sender_id', $other_id)
@@ -211,13 +211,13 @@ class MessageController extends Controller
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id.' thanh cong',
+                'message' => 'Đếm số lượng tin nhắn '.strtoupper($status).' của người dùng '.$user_id.' từ người dùng '.$other_id.' thành công',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi dem so luong tin nhan '.strtoupper($status).' cua nguoi dung '.$user_id.' tu nguoi dung '.$other_id,
+                'message' => 'Đã xảy ra lỗi khi đếm số lượng tin nhắn '.strtoupper($status).' của người dùng '.$user_id.' từ người dùng '.$other_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -240,7 +240,7 @@ class MessageController extends Controller
                 $get = 1;
             if (auth()->user()->role != 'admin' && 
                 $user_id != auth()->user()->user_id)
-                throw new Exception('Nguoi dung khong the xem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id);
+                throw new Exception('Người dùng không thể xem những người dùng nhắn tin gần nhất với người dùng '.$user_id);
             $lastestChats = Message::orderByRAW('MAX(messages.updated_at) DESC, message_id DESC')
             ->selectRaw('sender_id + receiver_id - ? as other_id,
                 if(sender.user_id!=?,sender.name,receiver.name) as name,
@@ -259,13 +259,13 @@ class MessageController extends Controller
             ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
+                'message' => 'Tìm kiếm những người dùng nhắn tin gần nhất với người dùng '.$user_id.' thành công',
                 'data' => $lastestChats,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi tim kiem nhung nguoi dung nhan tin gan nhat voi nguoi dung '.$user_id,
+                'message' => 'Đã xảy ra lỗi khi tìm kiếm những người dùng nhắn tin gần nhất với người dùng '.$user_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -281,13 +281,13 @@ class MessageController extends Controller
             ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
+                'message' => 'Đếm số người dùng UNSEEN bởi người dùng '.$user_id.' thành công',
                 'data' => $count,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Da xay ra loi khi dem so nguoi dung UNSEEN boi nguoi dung '.$user_id,
+                'message' => 'Đã xảy ra lỗi khi đếm số người dùng UNSEEN bởi người dùng '.$user_id,
                 'error' => $e->getMessage(),
             ]);
         }

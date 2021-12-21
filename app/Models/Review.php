@@ -5,11 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Report extends Model
+class Review extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'report_id';
+
+    protected $primaryKey = 'review_id';
     protected $fillable = ['detail', 'status', 'sender_id', 'receiver_id'];
 
     public function sender() {

@@ -45,20 +45,20 @@ Route::prefix('chat')->middleware('auth:api')->group(function ($router) {
     Route::get('count/unseen', 'MessageController@countUserUnseenChatWith')->name('Count Users being UNSEEN');
 });
 
-# Report
-Route::prefix('report')->group(function ($router) {
+# Review
+Route::prefix('review')->group(function ($router) {
     # Do not need to login
-    Route::get('to/{user_id}/count', 'ReportController@countReportstoUser')->name('Count Reports to User');
-    Route::get('to/{user_id}', 'ReportController@showReportstoUser')->name('Show Reports to User');
+    Route::get('to/{user_id}/count', 'ReviewController@countReviewstoUser')->name('Count Reviews to User');
+    Route::get('to/{user_id}', 'ReviewController@showReviewstoUser')->name('Show Reviews to User');
 
     # Need to login
     Route::middleware('auth:api')->group(function ($router) {
-        Route::get('', 'ReportController@showAllReports')->name('Show All Reports');
-        Route::post('create', 'ReportController@createReport')->name('Create Report');
-        Route::post('update', 'ReportController@updateReport')->name('Update Report');
-        Route::get('report_id/{report_id}', 'ReportController@showReport')->name('Show Report');
-        Route::get('from/{user_id}/count', 'ReportController@countReportsfromUser')->name('Count Reports from User');
-        Route::get('from/{user_id}', 'ReportController@showReportsfromUser')->name('Show Reports from User');
+        Route::get('', 'ReviewController@showAllReviews')->name('Show All Reviews');
+        Route::post('create', 'ReviewController@createReview')->name('Create Review');
+        Route::post('update', 'ReviewController@updateReview')->name('Update Review');
+        Route::get('review_id/{review_id}', 'ReviewController@showReview')->name('Show Review');
+        Route::get('from/{user_id}/count', 'ReviewController@countReviewsfromUser')->name('Count Reviews from User');
+        Route::get('from/{user_id}', 'ReviewController@showReviewsfromUser')->name('Show Reviews from User');
     });
 });
 

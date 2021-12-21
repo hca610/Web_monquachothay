@@ -4,15 +4,15 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportsTable extends Migration
+class CreateReviewsTable extends Migration
 {
     public static $status_list = ['hidden', 'unseen', 'seen'];
     
     public function up()
     {
-        Schema::create('reports', function (Blueprint $table) {
-            $table->id('report_id');
-            $table->string('detail')->default("There is nothing in this report");
+        Schema::create('reviews', function (Blueprint $table) {
+            $table->id('review_id');
+            $table->string('detail')->default("There is nothing in this review");
             $table->enum('status', $this::$status_list)->default('unseen');
             $table->foreignId('sender_id')->default(1);
             $table->foreignId('receiver_id')->default(1);
@@ -29,6 +29,6 @@ class CreateReportsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('reviews');
     }
 }

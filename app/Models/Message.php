@@ -30,6 +30,5 @@ class Message extends Model
             return [new PrivateChannel('MessageChannel.User.'.$this->sender_id), new PrivateChannel('MessageChannel.User.'.$this->receiver_id)];
         }
         return new PrivateChannel('MessageChannel.User.'.$this->receiver_id);
-        // return [new PrivateChannel('MessageChannel.User.'.$this->receiver_id), new Channel('MessageChannel.User.'.$this->receiver_id)];
     }
 }

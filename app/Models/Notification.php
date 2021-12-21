@@ -22,6 +22,5 @@ class Notification extends Model
     public function broadcastOn($event)
     {
         return new PrivateChannel('NotificationChannel.User.'.$this->receiver_id);
-        // return [new PrivateChannel('NotificationChannel.User.'.$this->receiver_id), new Channel('NotificationChannel.User.'.$this->receiver_id)];
     }
 }
