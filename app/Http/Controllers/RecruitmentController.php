@@ -25,7 +25,7 @@ class RecruitmentController extends Controller
             $following = 0;
             $applicationStatus = NULL;
 
-            if (auth()->user() != NULL) {
+            if (auth()->user() != NULL && auth()->user()->role == 'jobseeker') {
                 $jobSeeker = auth()->user()->jobSeeker;
 
                 $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
