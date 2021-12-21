@@ -78,7 +78,7 @@ class RecruitmentController extends Controller
             if ($recruitment->employer->user->status == 'active')
                 $collection->push([
                     'recruitment' => $recruitment,
-                    'emloyer' => $recruitment->employer,
+                    'employer' => $recruitment->employer,
                     'user' => $recruitment->employer->user,
                 ]);
         }
@@ -119,7 +119,7 @@ class RecruitmentController extends Controller
 
                 $collection->push([
                     'recruitment' => $recruitment,
-                    'emloyer' => $recruitment->employer,
+                    'employer' => $recruitment->employer,
                     'isFollowing' => $following,
                     'applicationStatus' => $applicationStatus,
                 ]);
