@@ -22,10 +22,30 @@ class RecruitmentController extends Controller
     {
         try {
             $recruitment = Recruitment::findOrFail($recruitmentId);
+            $following = 0;
+            $applicationStatus = NULL;
+
+            if (auth()->user() != NULL) {
+                $jobSeeker = auth()->user()->jobSeeker;
+
+                $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
+
+                if (sizeof($pivotObject) > 0) {
+                    $following = $pivotObject[0]->following;
+                    $applicationStatus = $pivotObject[0]->type;
+                } else {
+                    $following = 0;
+                    $applicationStatus = NULL;
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'recruitment' => $recruitment,
                 'employer' => $recruitment->employer,
+                'user' => $recruitment->employer->user,
+                'isFollowing' => $following,
+                'applicationStatus' => $applicationStatus,
             ]);
         } catch (Exception $e) {
             return response()->json([
