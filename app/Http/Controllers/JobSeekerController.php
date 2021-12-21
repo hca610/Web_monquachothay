@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Models\Recruitment;
+use Illuminate\Database\Eloquent\Collection;
 
 class JobSeekerController extends Controller
 {
@@ -95,24 +97,56 @@ class JobSeekerController extends Controller
     public function interestedRecruitments()
     {
         try {
+            $collection = new Collection();
             $jobSeeker = auth()->user()->jobSeeker;
+
+            // $recruitments = Recruitment::orderByDesc('created_at')
+            // ->
+            // ->get();
+
             $recruitments = DB::table('recruitments')
-                ->join('job_seeker_recruitment', 'recruitments.recruitment_id', '=', 'job_seeker_recruitment.recruitment_id')
-                ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
-                ->join('employers', 'employers.employer_id', '=', 'recruitments.employer_id')
-                ->join('users', 'users.user_id', '=', 'employers.user_id')
-                ->where('job_seeker_recruitment.job_seeker_id', $jobSeeker->job_seeker_id)
+            ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
+            ->get();
+
+            foreach ($recruitments as $recruitment) {
+                $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
+
+                if (sizeof($pivotObject) > 0) {
+                    $following = $pivotObject[0]->following;
+                    $applicationStatus = $pivotObject[0]->type;
+
+                    // Need this line because recruitments selected by table don't have function like
+                    // recruitments selected by model query
+                    $recruitment = Recruitment::find($recruitment->recruitment_id);
+
+                    $collection->push([
+                        'recruitment' => $recruitment,
+                        'employer' => $recruitment->employer,
+                        'user' => $recruitment->employer->user,
+                        'isFollowing' => $following,
+                        'applicationStatus' => $applicationStatus,
+                    ]);
+                    // return $recruitments;
+                }
+            }
+
+            return $collection;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    protected function checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment)
+    {
+        try {
+            $pivotObject = DB::table('job_seeker_recruitment')
+                ->where('job_seeker_id', $jobSeeker->job_seeker_id)
+                ->where('recruitment_id', $recruitment->recruitment_id)
                 ->get();
 
-            return response()->json([
-                'success' => true,
-                'data' => $recruitments,
-            ]);
+            return $pivotObject;
         } catch (Exception $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ]);
+            return NULL;
         }
     }
 }
