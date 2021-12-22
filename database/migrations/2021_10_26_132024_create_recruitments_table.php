@@ -14,9 +14,9 @@ class CreateRecruitmentsTable extends Migration
             $table->foreignId('employer_id');
             $table->integer('min_salary');
             $table->string('job_name');
-            $table->string('detail');
+            $table->text('detail');
             $table->enum('status', ['opening', 'closed'])->default('opening');
-            $table->string('requirement');
+            $table->text('requirement');
             $table->string('address');
             $table->timestamps();
 
