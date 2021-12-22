@@ -10,7 +10,8 @@ use App\Http\Controllers\UserController;
 
 class NotificationController extends Controller
 {
-    public function showAllNotifications(Request $request) {
+    public function showAllNotifications(Request $request)
+    {
         try {
             if ($request->has('before'))
                 $before = $request->before;
@@ -22,14 +23,14 @@ class NotificationController extends Controller
                 $get = 1;
             UserController::checkrole('admin');
             $notifications = Notification::orderByRaw('created_at DESC, notification_id DESC')
-            ->where(function ($query) use ($before) {
-                if (is_numeric($before) == 1)
-                    $query->where('notification_id', '<', $before);
-                else
-                    $query->where('created_at', '<', $before);
-            })
-            ->limit($get)
-            ->get();
+                ->where(function ($query) use ($before) {
+                    if (is_numeric($before) == 1)
+                        $query->where('notification_id', '<', $before);
+                    else
+                        $query->where('created_at', '<', $before);
+                })
+                ->limit($get)
+                ->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Tìm kiếm tất cả thông báo trên hệ thông thành công',
@@ -83,13 +84,14 @@ class NotificationController extends Controller
     {
         try {
             $notification = Notification::findOrFail($request->notification_id);
-            if (auth()->user()->role != 'admin' &&
-                $notification->receiver_id != auth()->user()->user_id)
+            if (
+                auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id
+            )
                 throw new Exception('Người dùng không thể chỉnh sửa thông báo này');
             if (auth()->user()->role == 'admin') {
                 $notification = $this->update($request->all());
-            }
-            else {
+            } else {
                 $notification = $this->update([
                     'notification_id' => $request->notification_id,
                     'status' => $request->status
@@ -114,8 +116,10 @@ class NotificationController extends Controller
         try {
             $notification_id = $request->notification_id;
             $notification = Notification::findOrFail($notification_id);
-            if (auth()->user()->role != 'admin' &&
-                $notification->receiver_id != auth()->user()->user_id)
+            if (
+                auth()->user()->role != 'admin' &&
+                $notification->receiver_id != auth()->user()->user_id
+            )
                 throw new Exception('Người dùng không thể xem thông báo này');
             return response()->json([
                 'success' => true,
@@ -146,22 +150,24 @@ class NotificationController extends Controller
                 $get = $request->get;
             else
                 $get = 1;
-            if (auth()->user()->role != 'admin' && 
-                $user_id != auth()->user()->user_id)
-                throw new Exception('Người dùng không thể xem thông báo của người dùng '.$user_id);
+            if (
+                auth()->user()->role != 'admin' &&
+                $user_id != auth()->user()->user_id
+            )
+                throw new Exception('Người dùng không thể xem thông báo của người dùng ' . $user_id);
             $notifications = Notification::orderByRaw('created_at DESC, notification_id DESC')
-            ->where('receiver_id', $user_id)
-            ->where(function ($query) use ($before) {
-                if (is_numeric($before) == 1)
-                    $query->where('notification_id', '<', $before);
-                else
-                    $query->where('created_at', '<', $before);
-            })
-            ->limit($get)
-            ->get();
+                ->where('receiver_id', $user_id)
+                ->where(function ($query) use ($before) {
+                    if (is_numeric($before) == 1)
+                        $query->where('notification_id', '<', $before);
+                    else
+                        $query->where('created_at', '<', $before);
+                })
+                ->limit($get)
+                ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tìm kiếm thông báo của người dùng '.$user_id.' thành công',
+                'message' => 'Tìm kiếm thông báo của người dùng ' . $user_id . ' thành công',
                 'data' => $notifications,
             ]);
         } catch (Exception $e) {
@@ -182,23 +188,24 @@ class NotificationController extends Controller
                 $user_id = auth()->user()->user_id;
             $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
-                throw new Exception('Trạng thái (status) của thông báo '.strtoupper($status).' không hợp lệ');
-            if (auth()->user()->role != 'admin' && 
-                $user_id != auth()->user()->user_id)
-                throw new Exception('Người dùng không thể xem số lượng thông báo '.strtoupper($status).' của người dùng '.$user_id);
-            $counter = Notification::
-            where('receiver_id', $user_id)
-            ->where('status', $status)
-            ->count();
+                throw new Exception('Trạng thái (status) của thông báo ' . strtoupper($status) . ' không hợp lệ');
+            if (
+                auth()->user()->role != 'admin' &&
+                $user_id != auth()->user()->user_id
+            )
+                throw new Exception('Người dùng không thể xem số lượng thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id);
+            $counter = Notification::where('receiver_id', $user_id)
+                ->where('status', $status)
+                ->count();
             return response()->json([
                 'success' => true,
-                'message' => 'Đếm số lượng thông báo '.strtoupper($status).' của người dùng '.$user_id.' thành công',
+                'message' => 'Đếm số lượng thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id . ' thành công',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi đếm số lượng thông báo '.strtoupper($status).' của người dùng ' . $user_id,
+                'message' => 'Đã xảy ra lỗi khi đếm số lượng thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }
@@ -221,32 +228,35 @@ class NotificationController extends Controller
                 $get = 1;
             $status = $request->status;
             if ($status != 'unseen' && $status != 'seen')
-                throw new Exception('Trạng thái (status) của thông báo '.strtoupper($status).' không hợp lệ');
-            if (auth()->user()->role != 'admin' && 
-                $user_id != auth()->user()->user_id)
-                throw new Exception('Người dùng không thể xem thông báo '.strtoupper($status).' của người dùng '.$user_id);
+                throw new Exception('Trạng thái (status) của thông báo ' . strtoupper($status) . ' không hợp lệ');
+            if (
+                auth()->user()->role != 'admin' &&
+                $user_id != auth()->user()->user_id
+            )
+                throw new Exception('Người dùng không thể xem thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id);
             $counter = Notification::orderByRaw('created_at DESC, notification_id DESC')
-            ->where('receiver_id', $user_id)
-            ->where('status', $status)
-            ->where(function ($query) use ($before) {
-                if (is_numeric($before) == 1)
-                    $query->where('notification_id', '<', $before);
-                else
-                    $query->where('created_at', '<', $before);
-            })
-            ->limit($get)
-            ->get();
+                ->where('receiver_id', $user_id)
+                ->where('status', $status)
+                ->where(function ($query) use ($before) {
+                    if (is_numeric($before) == 1)
+                        $query->where('notification_id', '<', $before);
+                    else
+                        $query->where('created_at', '<', $before);
+                })
+                ->limit($get)
+                ->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Tìm kiếm thông báo '.strtoupper($status).' của người dùng '.$user_id.' thành công',
+                'message' => 'Tìm kiếm thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id . ' thành công',
                 'data' => $counter,
             ]);
         } catch (Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Đã xảy ra lỗi khi tìm kiếm thông báo '.strtoupper($status).' của người dùng ' . $user_id,
+                'message' => 'Đã xảy ra lỗi khi tìm kiếm thông báo ' . strtoupper($status) . ' của người dùng ' . $user_id,
                 'error' => $e->getMessage(),
             ]);
         }
     }
+
 }

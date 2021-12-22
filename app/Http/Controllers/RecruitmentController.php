@@ -12,7 +12,7 @@ class RecruitmentController extends Controller
 {
     public function showAllRecruitment(Request $request)
     {
-        if (auth()->user() != NULL)
+        if (auth()->user() != NULL && auth()->user()->role == 'jobseeker')
             return response()->json($this->showAllRecruitmentAsJobSeeker($request));
         else
             return response()->json($this->showAllRecruitmentAsGuest($request));
@@ -22,10 +22,30 @@ class RecruitmentController extends Controller
     {
         try {
             $recruitment = Recruitment::findOrFail($recruitmentId);
+            $following = 0;
+            $applicationStatus = NULL;
+
+            if (auth()->user() != NULL && auth()->user()->role == 'jobseeker') {
+                $jobSeeker = auth()->user()->jobSeeker;
+
+                $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
+
+                if (sizeof($pivotObject) > 0) {
+                    $following = $pivotObject[0]->following;
+                    $applicationStatus = $pivotObject[0]->type;
+                } else {
+                    $following = 0;
+                    $applicationStatus = NULL;
+                }
+            }
+
             return response()->json([
                 'success' => true,
                 'recruitment' => $recruitment,
                 'employer' => $recruitment->employer,
+                'user' => $recruitment->employer->user,
+                'isFollowing' => $following,
+                'applicationStatus' => $applicationStatus,
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -58,7 +78,7 @@ class RecruitmentController extends Controller
             if ($recruitment->employer->user->status == 'active')
                 $collection->push([
                     'recruitment' => $recruitment,
-                    'emloyer' => $recruitment->employer,
+                    'employer' => $recruitment->employer,
                     'user' => $recruitment->employer->user,
                 ]);
         }
@@ -99,7 +119,8 @@ class RecruitmentController extends Controller
 
                 $collection->push([
                     'recruitment' => $recruitment,
-                    'emloyer' => $recruitment->employer,
+                    'employer' => $recruitment->employer,
+                    'user' => $recruitment->employer->user,
                     'isFollowing' => $following,
                     'applicationStatus' => $applicationStatus,
                 ]);
@@ -123,5 +144,13 @@ class RecruitmentController extends Controller
         } catch (Exception $e) {
             return NULL;
         }
+    }
+
+    public function showAllRecruitmentOfAEmployer($id)
+    {
+        return DB::table('employers')
+            ->join('users', 'employers.user_id', '=', 'users.user_id')
+            ->join('recruitments', 'recruitments.employer_id', '=', 'employers.employer_id')
+            ->get();
     }
 }

@@ -108,4 +108,5 @@ Route::get('get-image/{id}', [ImageController::class, 'getImage']);
 // Guest
 Route::get('/user/{user}', 'AdminController@showDetailOfAUser');
 Route::get('/employers', 'EmployerController@showAllEmployer');
+Route::get('/employer/{id}/recruitments', 'RecruitmentController@showAllRecruitmentOfAEmployer');
 
