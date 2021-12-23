@@ -1,4 +1,10 @@
-# Cách cài đặt server Backend 
+# Mục lục
+* [Cài đặt Backend-sever](#backend-sever)
+* [Tài liệu api hệ thống](#api)
+* [Tài liệu sử dụng web-socket](#web-socket)
+* [Thiết kế cơ sở dữ liệu](#database)
+
+# Cài đặt Backend-sever <a name="backend-sever"></a>
  Đầu tiên clone repo về máy 
 ``` sh
 git clone https://github.com/hca610/Web_monquachothay.git
@@ -16,7 +22,14 @@ DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=Web_monquachothay
 DB_USERNAME=root
-DB_PASSWORD=[Nhập pass của database nếu có]  
+DB_PASSWORD=[Nhập pass của database nếu có]
+
+BROADCAST_DRIVER=pusher
+
+PUSHER_APP_ID=1315519
+PUSHER_APP_KEY=a13024e4824fe0c8b79c
+PUSHER_APP_SECRET=549b46ce78e711c563cf
+PUSHER_APP_CLUSTER=ap1
 ```
 
 Mở terminal, trỏ vào folder project rồi nhập:
@@ -43,130 +56,84 @@ Bật server:
 ``` sh
 php artisan serve
 ```
-
-# De su dung Websocket
-## Doi voi Back-end
-Sua doi them noi dung trong file .env.example:
+Trong trường hợp có lỗi khi gọi api, thử xóa cache:
+``` sh
+php artisan optimize:clear
 ```
-BROADCAST_DRIVER=pusher
 
-PUSHER_APP_ID=1315519
-PUSHER_APP_KEY=a13024e4824fe0c8b79c
-PUSHER_APP_SECRET=549b46ce78e711c563cf
-PUSHER_APP_CLUSTER=ap1
+# Tài liệu api hệ thống <a name="api"></a>
+https://documenter.getpostman.com/view/18333728/UVRDF5dA
+
+# Tài liệu sử dụng web-socket <a name="web-socket"></a>
+Sever sử dụng web-socket thông qua nền tảng [Pusher](https://pusher.com/)
+
+Hiện tại back-end sever tiến hành broadcast trên 2 loại channel là private-MessageChannel.User.{user_id} và private-NotificationChannel.User.{user_id}. Các channel này được bảo mật cho từng người dùng thông qua acess token tương y hệt như acess token dùng cho api. Mỗi access token chỉ tương ứng với đúng một người dùng, vì vậy dựa vào access token ta có thể biết được người dùng kết nối với channel có hợp lệ không.
+
+### private-MessageChannel.User.{user_id} Hỗ trợ chat realtime
+Có thể bắt được các event sau:
+- MessageCreated: Khi có một tin nhắn mới được tạo ra với receiver_id = user_id, tức tin nhắn mới được tạo ra và gửi tới người dùng có id là user_id.
+- MessageUpdated: Khi có cấp nhật tin nhắn (bắt buộc cập nhật phải có thay đổi giá trị của ít nhất một thuộc tính bên trong tin nhắn, nếu có gọi api update nhứng không có dữ liệu gì bị thay đổi thì sẽ không có event) với tin nhắn có sender_id = user_id hoặc receiver_id = user_id, tức tin nhắn gửi từ hoặc gửi tới người dùng có id là user_id.
+
+### private-NotificationChannel.User.{user_id} Hỗ trợ nhận thông báo realtime
+Có thể bắt dược các event sau:
+- NotificationCreated: Khi có một thông báo mơi được tạo ra với receiver_id = user_id, tức thông báo mới được tạo ra và gửi tới người dùng có id là user_id.
+- NotificationUpdated: Khi có cập nhật thông báo (bắt buộc cập nhật phải có thay đổi giá trị của ít nhất một thuộc tính bên trong thông báo, nếu có gọi api update nhứng không có dữ liệu gì bị thay đổi thì sẽ không có event) với thông báo có receiver_id = user_id, tức tin nhắn gửi tới người dùng có id là user_id.
+
+### Dùng thử từ chính backend-sever
+1. Khởi động backend-sever:
+``` sh
+php artisan serve
 ```
-Cai dat them pusher:
-```
-composer require pusher/pusher-php-server
-```
-## Doi voi Front-end
+2. Truy cập link 127.0.0.1/test/listen để trải nghiệm [Pusher](https://pusher.com/) (Mở console log để biết được những gì đang xảy ra)
 
-Hien tai back-end sever co broadcast tren 2 channel la private-MessageChannel.User.{user_id} va private-NotificationChannel.User.{user_id}
-
-### private-MessageChannel.User.{user_id} Danh cho chat
-Co cac event sau:
-- MessageCreated: Khi co mot tin nhan moi duoc tao ra voi receiver_id = user_id, tuc tin nhan gui toi nguoi dung user_id
-- MessageUpdated: Khi co cap nhat cho tin nhan (bat buoc cap nhat phai co thay doi thanh phan ben trong tin nhan, neu khong co thay doi gi khi goi api update thi se khong co event) voi tin nhan co receiver_id = user_id, tuc tin nhan gui toi nguoi dung user_id
-
-### private-NotificationChannel.User.{user_id} Danh cho notification
-Co cac event sau:
-- NotificationCreated
-- NotificationUpdated
-
-Cac event tuong tu nhu o phan Message
-
-### Vi du
-
-Truy cap link {ten mien}/test/listen de chay code mau
-
-Trong code mau co 4 channel
-- MessageChannel.User.1
-- private-MessageChannel.User.1
-- MessageChannel.User.2
-- private-MessageChannel.User.2
-
-Neu cai dat dung thi se listen duoc event tu private-MessageChannel.User.1 (kenh private cua user co user_id bang 1 trong he thong).
-
-#### React native
-Doi voi react-native thi can cai dat them lenh phia duoi
+### Hướng dẫn sử dụng cụ cho người dùng React js
+1. Cài đặt thư viện Pusher
 ```sh
-npm install pusher-js @react-native-community/netinfo
+npm install pusher-js
 ```
-va trong code nho import them thu vien:
+2. Khi sử dụng cần khai báo thư viện
 ```js
-import Pusher from 'pusher-js/react-native';
+import Pusher from 'pusher-js';
 ```
-code y het nhu phan script cua code mau
-
-#### Code mau:
-```html
-<!DOCTYPE html>
-<head>
-  <title>Pusher Test</title>
-  <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-  <script>
-
-    // Enable pusher logging - don't include this in production
-    Pusher.logToConsole = true;
-
-    var pusher = new Pusher('a13024e4824fe0c8b79c', {
-      cluster: 'ap1',
-      forceTLS: true,
-      authEndpoint: "{ten mien cua backend sever}/broadcasting/auth",
-      // neu khong dien gi vao phan ten mien backend sever thi se mac dinh la ip cua localhost, code se hoan toan chay tren may local
-      auth: {
-          headers: {
-            Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYzOTIyOTgxNywiZXhwIjoxNjM5ODM0NjE3LCJuYmYiOjE2MzkyMjk4MTcsImp0aSI6IlZGcDRUUlJFaGhOWGFjdTAiLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.qRA0AwUGmW1xMEn-_JtXxmnbZ8Ox6fqeJfiRc17YO14'
-          }, // Day la token cua user 1 (Chay tren may cua Long)
+3. Tạo object pusher:
+```js
+var pusher = new Pusher('a13024e4824fe0c8b79c', {
+  cluster: 'ap1',
+  forceTLS: true,
+  authEndpoint: "<tên miền của backend sever>/broadcasting/auth",
+  auth: {
+      headers: {
+        Authorization: 'Bearer ' + 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xMjcuMC4wLjE6ODAwMFwvYXBpXC9hdXRoXC9sb2dpbiIsImlhdCI6MTYzOTIyOTgxNywiZXhwIjoxNjM5ODM0NjE3LCJuYmYiOjE2MzkyMjk4MTcsImp0aSI6IlZGcDRUUlJFaGhOWGFjdTAiLCJzdWIiOjEsInBydiI6IjIzYmQ1Yzg5NDlmNjAwYWRiMzllNzAxYzQwMDg3MmRiN2E1OTc2ZjcifQ.qRA0AwUGmW1xMEn-_JtXxmnbZ8Ox6fqeJfiRc17YO14' // Đây là access token
       },
-    });
+  },
+});
+ ```
+ 4. Kết nối với các channel và nghe event
+ ```js
+var channel1 = pusher.subscribe('MessageChannel.User.1');
+channel1.bind('MessageUpdated', function(data) {
+  alert(JSON.stringify(data));
+  console.log("User 1 get Update");
+});
+channel1.bind('MessageCreated', function(data) {
+  alert("Create"+JSON.stringify(data));
+  console.log("User 1 get Create");
+});
 
-    var channel1 = pusher.subscribe('MessageChannel.User.1');
-    channel1.bind('MessageUpdated', function(data) {
-      alert(JSON.stringify(data));
-      console.log("User 1 get Update");
-    });
-    channel1.bind('MessageCreated', function(data) {
-      alert("Create"+JSON.stringify(data));
-      console.log("User 1 get Create");
-    });
+var channel2 = pusher.subscribe('private-MessageChannel.User.1');
+channel2.bind('MessageUpdated', function(data) {
+  alert(JSON.stringify(data));
+  console.log("User 1 get PRIVATE Update");
+});
+channel2.bind('MessageCreated', function(data) {
+  alert("Create"+JSON.stringify(data));
+  console.log("User 1 get PRIVATE Create");
+});
+ ```
+    Code này đang nghe 2 channel:
+    - MessageChannel.User.1
+    - private-MessageChannel.User.1
 
-    var channel2 = pusher.subscribe('private-MessageChannel.User.1');
-    channel2.bind('MessageUpdated', function(data) {
-      alert(JSON.stringify(data));
-      console.log("User 1 get PRIVATE Update");
-    });
-    channel2.bind('MessageCreated', function(data) {
-      alert("Create"+JSON.stringify(data));
-      console.log("User 1 get PRIVATE Create");
-    });
+# Thiết kế cơ sở dữ liệu <a name="database"></a>
 
-    var channel3 = pusher.subscribe('MessageChannel.User.2');
-    channel3.bind('MessageUpdated', function(data) {
-      alert(JSON.stringify(data));
-      console.log("User 2 get Update");
-    });
-    channel3.bind('MessageCreated', function(data) {
-      alert("Create"+JSON.stringify(data));
-      console.log("User 2 get Create");
-    });
-
-    var channel4 = pusher.subscribe('private-MessageChannel.User.2');
-    channel4.bind('MessageUpdated', function(data) {
-      alert(JSON.stringify(data));
-      console.log("User 2 get PRIVATE Update");
-    });
-    channel4.bind('MessageCreated', function(data) {
-      alert("Create"+JSON.stringify(data));
-      console.log("User 2 get PRIVATE Create");
-    });
-  </script>
-</head>
-<body>
-  <h1>Pusher Test</h1>
-  <p>
-    Try publishing an event to channel <code>my-channel</code>
-    with event name <code>my-event</code>.
-  </p>
-</body>
-```
+![Sơ đồ thiết kế cơ sở dữ liệu](https://i.imgur.com/GSf4iHe.png)
