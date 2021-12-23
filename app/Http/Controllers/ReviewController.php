@@ -27,6 +27,7 @@ class ReviewController extends Controller
         try {
             $data = $request->all();
             $data['sender_id'] = auth()->user()->user_id;
+            $data['status'] = 'unseen';
             $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
@@ -48,6 +49,7 @@ class ReviewController extends Controller
             $data = $request->all();
             if (!$request->has('sender_id'))
                 $data['sender_id'] = auth()->user()->user_id;
+            $data['status'] = 'unseen';
             $review = Review::where('sender_id', $data['sender_id'])
             ->where('receiver_id', $data['receiver_id'])
             ->first();
@@ -119,7 +121,7 @@ class ReviewController extends Controller
     public function showReviewstoUser($receiver_id)
     {
         try {
-            $reviews = Review::orderByDesc('created_at')
+            $reviews = Review::orderByDesc('updated_at')
             ->where('receiver_id', $receiver_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
@@ -149,7 +151,7 @@ class ReviewController extends Controller
             if (auth()->user()->role != 'admin' && 
                 auth()->user()->user_id != $sender_id)
                 throw new Exception('Người dùng không thể xem review được gửi từ người dùng '.$sender_id);
-            $reviews = Review::orderByDesc('created_at')
+            $reviews = Review::orderByDesc('updated_at')
             ->where('sender_id', $sender_id)
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
@@ -177,7 +179,7 @@ class ReviewController extends Controller
     {
         try {
             UserController::checkrole('admin');
-            $reviews = Review::orderByDesc('created_at')
+            $reviews = Review::orderByDesc('updated_at')
             ->join('users as sender', 'sender.user_id', '=', 'sender_id')
             ->join('users as receiver', 'receiver.user_id', '=', 'receiver_id')
             ->select('reviews.*', 
