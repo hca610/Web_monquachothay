@@ -120,8 +120,8 @@ class AdminController extends Controller
         $users= DB::table('employers')
             ->join('recruitments', 'employers.employer_id', '=', "recruitments.employer_id")
             ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
-            ->join('users', 'users.user_id', '=', 'job_seekers.user_id')
             ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
+            ->join('users', 'users.user_id', '=', 'job_seekers.user_id')
             ->where('recruitments.employer_id', $employer->employer_id)
             ->get('users.user_id');
 
