@@ -151,6 +151,7 @@ class RecruitmentController extends Controller
         return DB::table('employers')
             ->join('users', 'employers.user_id', '=', 'users.user_id')
             ->join('recruitments', 'recruitments.employer_id', '=', 'employers.employer_id')
+            ->where('employers.employer_id', $id)
             ->get();
     }
 }

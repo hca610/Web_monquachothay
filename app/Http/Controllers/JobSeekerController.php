@@ -56,8 +56,14 @@ class JobSeekerController extends Controller
         try {
             $jobSeeker = auth()->user()->jobSeeker;
             $jobSeeker->recruitments()->syncWithPivotValues([$request->recruitment_id,], ['type' => 'pending'], false);
+            $recruitment = Recruitment::find($request->recruitment_id);
 
-
+            NotificationController::create([
+                'title' => 'Có ứng viên mới',
+                'status' => 'unseen',
+                'detail' => 'Đã có ứng viên mới tại việc làm '.$recruitment->job_name,
+                'receiver_id' => $recruitment->employer->user->user_id,
+            ]);
             return response()->json([
                 'success' => true,
                 'message' => 'Đã gửi yêu cầu',
@@ -103,8 +109,8 @@ class JobSeekerController extends Controller
             $jobSeeker = auth()->user()->jobSeeker;
 
             $recruitments = DB::table('recruitments')
-            ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
-            ->get();
+                ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
+                ->get();
 
             foreach ($recruitments as $recruitment) {
                 $pivotObject = $this->checkStatusOfRecruitmentAsJobSeeker($jobSeeker, $recruitment);
