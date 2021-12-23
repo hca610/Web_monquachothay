@@ -117,19 +117,20 @@ class AdminController extends Controller
 
     public function createNotificationToAllJobseekerApplyingToEmployer($employer)
     {
-        $jobSeekers = DB::table('employers')
+        $users= DB::table('employers')
             ->join('recruitments', 'employers.employer_id', '=', "recruitments.employer_id")
             ->join('job_seeker_recruitment', 'job_seeker_recruitment.recruitment_id', '=', 'recruitments.recruitment_id')
+            ->join('users', 'users.user_id', '=', 'job_seekers.user_id')
             ->join('job_seekers', 'job_seekers.job_seeker_id', '=', 'job_seeker_recruitment.job_seeker_id')
             ->where('recruitments.employer_id', $employer->employer_id)
-            ->get('job_seekers.job_seeker_id');
+            ->get('users.user_id');
 
-        foreach ($jobSeekers as $jobSeeker) {
+        foreach ($users as $user) {
             NotificationController::create([
                 'title' => 'Tài khoản nhà tuyển dụng đã bị khóa',
                 'status' => 'unseen',
                 'detail' => 'Tài khoản của nhà tuyển dụng của việc làm mà bạn đang theo dõi đã bị khóa',
-                'receiver_id' => $jobSeeker->job_seeker_id,
+                'receiver_id' => $user->user_id,
             ]);
         }
     }

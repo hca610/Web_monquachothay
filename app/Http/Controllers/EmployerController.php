@@ -124,7 +124,7 @@ class EmployerController extends Controller
                 'title' => $titleNotification,
                 'status' => 'unseen',
                 'detail' => $detailNotification,
-                'receiver_id' => $jobSeeker->job_seeker_id,
+                'receiver_id' => $jobSeeker->user->user_id,
             ]);
 
             return response()->json([
