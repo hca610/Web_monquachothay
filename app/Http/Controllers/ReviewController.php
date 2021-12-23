@@ -27,6 +27,7 @@ class ReviewController extends Controller
         try {
             $data = $request->all();
             $data['sender_id'] = auth()->user()->user_id;
+            $data['status'] = 'unseen';
             $review = self::updateOrCreate($data);
             return response()->json([
                 'success' => true,
@@ -48,6 +49,7 @@ class ReviewController extends Controller
             $data = $request->all();
             if (!$request->has('sender_id'))
                 $data['sender_id'] = auth()->user()->user_id;
+            $data['status'] = 'unseen';
             $review = Review::where('sender_id', $data['sender_id'])
             ->where('receiver_id', $data['receiver_id'])
             ->first();

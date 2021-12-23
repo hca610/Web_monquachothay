@@ -12,7 +12,7 @@ class CreateMessagesTable extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id('message_id');
-            $table->string('detail')->default("There is nothing in this message");
+            $table->text('detail')->default("There is nothing in this message");
             $table->enum('status', $this::$status_list)->default('unseen');
             $table->foreignId('sender_id')->default(1);
             $table->foreignId('receiver_id')->default(1);
