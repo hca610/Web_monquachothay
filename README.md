@@ -84,7 +84,7 @@ Có thể bắt dược các event sau:
 ``` sh
 php artisan serve
 ```
-2. Truy cập link 127.0.0.1/test/listen để trải nghiệm [Pusher](https://pusher.com/) (Mở console log để biết được những gì đang xảy ra)
+2. Truy cập link http:/127.0.0.1/test/listen để trải nghiệm [Pusher](https://pusher.com/) (Mở console log để biết được những gì đang xảy ra)
 
 ### Hướng dẫn sử dụng cụ cho người dùng React js
 1. Cài đặt thư viện [Pusher](https://pusher.com/)
