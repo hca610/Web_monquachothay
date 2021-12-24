@@ -14,5 +14,3 @@ yarn-error.log
 /.idea
 /.vscode
 allroute.txt
-docker-compose.yml
-Dockerfile

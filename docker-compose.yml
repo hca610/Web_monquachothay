@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  api-server:
+    image: job-warehouse-be
+    depends_on:
+      - database
+    # volumes:
+    #   - .:/src
+    #   - type: bind
+    #     source: .
+    #     target: /src
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+
+  database:
+    image: mysql:8
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=Web_monquachothay
+    expose:
+      - 3306
+    ports:
+      - "3306:3306"
