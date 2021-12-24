@@ -2,6 +2,8 @@
 * [Tài liệu api hệ thống](#api)
 * [Tài liệu sử dụng web-socket](#web-socket)
 
+Tài khoản admin: admin@email.com | password: 12345678
+
 ## Tài liệu api hệ thống <a name="api"></a>
 [https://documenter.getpostman.com/view/18333728/UVRDF5dA](https://documenter.getpostman.com/view/18333728/UVRDF5dA)
 
