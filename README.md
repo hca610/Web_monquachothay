@@ -1,10 +1,10 @@
 # Mục lục
-* [Cài đặt Backend-sever](https://github.com/hca610/Web_monquachothay/blob/dev/README.md#c%C3%A0i-%C4%91%E1%BA%B7t-backend-sever-)
-* [Tài liệu api hệ thống](https://github.com/hca610/Web_monquachothay/blob/dev/README.md#t%C3%A0i-li%E1%BB%87u-api-h%E1%BB%87-th%E1%BB%91ng-)
-* [Tài liệu sử dụng web-socket](https://github.com/hca610/Web_monquachothay/blob/dev/README.md#t%C3%A0i-li%E1%BB%87u-s%E1%BB%AD-d%E1%BB%A5ng-web-socket-)
-* [Thiết kế cơ sở dữ liệu](https://github.com/hca610/Web_monquachothay/blob/dev/README.md#thi%E1%BA%BFt-k%E1%BA%BF-c%C6%A1-s%E1%BB%9F-d%E1%BB%AF-li%E1%BB%87u-)
+* [Cài đặt Backend-sever](#backend-sever)
+* [Tài liệu api hệ thống](#api)
+* [Tài liệu sử dụng web-socket](#web-socket)
+* [Thiết kế cơ sở dữ liệu](#database)
 
-# Cài đặt Backend-sever
+# Cài đặt Backend-sever <a name="backend-sever"></a>
  Đầu tiên clone repo về máy 
 ``` sh
 git clone https://github.com/hca610/Web_monquachothay.git
@@ -61,10 +61,10 @@ Trong trường hợp có lỗi khi gọi api, thử xóa cache:
 php artisan optimize:clear
 ```
 
-# Tài liệu api hệ thống
+# Tài liệu api hệ thống <a name="api"></a>
 https://documenter.getpostman.com/view/18333728/UVRDF5dA
 
-# Tài liệu sử dụng web-socket
+# Tài liệu sử dụng web-socket <a name="web-socket"></a>
 Sever sử dụng web-socket thông qua nền tảng [Pusher](https://pusher.com/)
 
 Hiện tại back-end sever tiến hành broadcast trên 2 loại channel là private-MessageChannel.User.{user_id} và private-NotificationChannel.User.{user_id}. Các channel này được bảo mật cho từng người dùng thông qua acess token tương y hệt như acess token dùng cho api. Mỗi access token chỉ tương ứng với đúng một người dùng, vì vậy dựa vào access token ta có thể biết được người dùng kết nối với channel có hợp lệ không.
@@ -134,6 +134,6 @@ channel2.bind('MessageCreated', function(data) {
     - MessageChannel.User.1
     - private-MessageChannel.User.1
 
-# Thiết kế cơ sở dữ liệu
+# Thiết kế cơ sở dữ liệu <a name="database"></a>
 
 ![Sơ đồ thiết kế cơ sở dữ liệu](https://i.imgur.com/GSf4iHe.png)
