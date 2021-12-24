@@ -108,7 +108,7 @@ var pusher = new Pusher('a13024e4824fe0c8b79c', {
   },
 });
  ```
- 4. Kết nối với các channel và nghe event
+ 4. Kết nối với các channel và nghe event thông quá object pusher vừa tạo
  ```js
 var channel1 = pusher.subscribe('MessageChannel.User.1');
 channel1.bind('MessageUpdated', function(data) {
