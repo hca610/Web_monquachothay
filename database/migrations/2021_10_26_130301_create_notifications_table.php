@@ -12,8 +12,8 @@ class CreateNotificationsTable extends Migration
     {
         Schema::create('notifications', function (Blueprint $table) {
             $table->id('notification_id');
-            $table->text('title')->default("A short description about this notification");
-            $table->text('detail')->default("There is nothing in this notification");
+            $table->text('title');
+            $table->text('detail');
             $table->enum('status', $this::$status_list)->default('unseen');
             $table->foreignId('receiver_id')->default(1);
             $table->timestamps();

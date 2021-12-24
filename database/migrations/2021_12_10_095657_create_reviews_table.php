@@ -12,7 +12,7 @@ class CreateReviewsTable extends Migration
     {
         Schema::create('reviews', function (Blueprint $table) {
             $table->id('review_id');
-            $table->text('detail')->default("There is nothing in this review");
+            $table->text('detail');
             $table->enum('status', $this::$status_list)->default('unseen');
             $table->foreignId('sender_id')->default(1);
             $table->foreignId('receiver_id')->default(1);
