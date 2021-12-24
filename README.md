@@ -1,5 +1,5 @@
 # Mục lục
-* [Cài đặt Backend-sever](#backend-sever)
+* [Cài đặt Backend-sever](https://github.com/hca610/Web_monquachothay/blob/dev/README.md#c%C3%A0i-%C4%91%E1%BA%B7t-backend-sever-)
 * [Tài liệu api hệ thống](#api)
 * [Tài liệu sử dụng web-socket](#web-socket)
 * [Thiết kế cơ sở dữ liệu](#database)
