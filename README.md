@@ -1,7 +1,6 @@
 ## Mục lục
 * [Tài liệu api hệ thống](#api)
 * [Tài liệu sử dụng web-socket](#web-socket)
-* [Thiết kế cơ sở dữ liệu](#database)
 
 ## Tài liệu api hệ thống <a name="api"></a>
 [https://documenter.getpostman.com/view/18333728/UVRDF5dA](https://documenter.getpostman.com/view/18333728/UVRDF5dA)
