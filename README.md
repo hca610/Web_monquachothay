@@ -1,5 +1,4 @@
 ## Mục lục
-* [Cài đặt Backend-sever](#backend-sever)
 * [Tài liệu api hệ thống](#api)
 * [Tài liệu sử dụng web-socket](#web-socket)
 * [Thiết kế cơ sở dữ liệu](#database)
